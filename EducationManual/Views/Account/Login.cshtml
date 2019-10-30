@@ -1,0 +1,31 @@
+﻿@model EducationManual.Models.LoginModel
+
+@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Login</h2>
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        @Html.ValidationSummary()
+        <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
+        <p>
+            <label>Email</label><br />
+            @Html.EditorFor(x => x.Email)
+        </p>
+        <p>
+            <label>Password</label><br />
+            @Html.EditorFor(x => x.Password)
+        </p>
+        <p><button type="submit">Submit</button></p>
+    </div>
+}
+
+<div>
+    <p>@Html.ActionLink("Don't have an account yet?", "Register", "Account")</p>
+</div>
