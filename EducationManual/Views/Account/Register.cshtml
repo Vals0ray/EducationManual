@@ -1,0 +1,40 @@
+﻿@model EducationManual.Models.RegisterModel
+ 
+@{
+    ViewBag.Title = "Register";
+}
+ 
+<h2>Registration</h2>
+<hr />
+ 
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+     
+<div>
+    @Html.ValidationSummary(false)
+
+    <div>
+        <p>
+            <label>Email</label><br />
+            @Html.EditorFor(model => model.Email)
+        </p>
+
+        <p>
+            <label>Password</label><br />
+            @Html.EditorFor(model => model.Password)
+        </p>
+
+        <p>
+            <label>Confirm password</label><br />
+            @Html.EditorFor(model => model.PasswordConfirm)
+        </p>
+    </div>
+
+    <div>
+        <p>
+            <button type="submit">Submit</button>
+        </p>
+    </div>
+</div>
+}
