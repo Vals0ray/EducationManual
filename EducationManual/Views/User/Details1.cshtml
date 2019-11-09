@@ -1,0 +1,49 @@
+﻿@model EducationManual.ViewModels.UserViewModel
+
+<div>
+    <h4>UserViewModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        @Html.HiddenFor(model => model.Id)
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+
+        <dd>
+            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SecondName)
+        </dt>
+
+        <dd>
+            @Html.EditorFor(model => model.SecondName, new { htmlAttributes = new { @class = "form-control" } })
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Role)
+        </dt>
+
+        <dd>
+            @Html.EditorFor(model => model.Role, new { htmlAttributes = new { @class = "form-control" } })
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.isBlocked)
+        </dt>
+
+        <dd>
+            @Html.CheckBox("Enable", Model.isBlocked)
+            @Html.ActionLink("block/unblock user", "Block", new { userId = Model.Id })
+        </dd>
+
+        <dd>
+            @Html.ActionLink("Save", "Save", new { model = Model })
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back", "Update", "School", new { id = Model.SchoolId}, null)
+</p>

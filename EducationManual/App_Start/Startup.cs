@@ -13,6 +13,11 @@ namespace EducationManual.App_Start
         public void Configuration(IAppBuilder app)
         {
             app.CreatePerOwinContext<ApplicationContext>(ApplicationContext.Create);
+
+            //ApplicationContext db = new ApplicationContext();
+            //db.Database.Delete();
+            //db.Database.Create();
+
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
 
             app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);

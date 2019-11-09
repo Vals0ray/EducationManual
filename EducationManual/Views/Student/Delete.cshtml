@@ -1,0 +1,27 @@
+﻿@model EducationManual.Models.Student
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <button class="close" data-dismiss="modal" area-hidden="true">X</button>
+            <h4>Delete student</h4>
+        </div>
+        <div class="modal-body">
+            <p>Realy delete student 
+            @Html.DisplayFor(model => model.FirstName) 
+            @Html.DisplayFor(model => model.SecondName)?</p>
+        </div>
+        <div class="modal-footer">
+            <input type="hidden" value="@Model.StudentId" name="Id" />
+            <input type="submit" value="Delete" class="btn btn-primary" />
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+}

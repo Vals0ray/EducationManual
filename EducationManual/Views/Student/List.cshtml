@@ -1,0 +1,70 @@
+﻿@model IEnumerable<EducationManual.Models.Student>
+@using EducationManual.Models;
+
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
+<p>
+    <h4>Studens of class: @ViewBag.ClassroomName</h4>
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SecondName)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SecondName)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", new { id = item.StudentId })
+                @if (!User.IsInRole("Teacher"))
+                {
+                    @Html.Label(" | ")
+                    @Html.ActionLink("Update", "Update", new { id = item.StudentId })
+                    @Html.Label(" | ")
+                    @Html.ActionLink("Delete", "Delete", item, new { @class = "delItem" })
+                }
+            </td>
+        </tr>
+    }
+
+</table>
+
+@if (!User.IsInRole("Teacher"))
+{
+    <p>
+        @Html.ActionLink("Create new student", "Create", new { classroomId = ViewBag.ClassroomId })
+    </p>
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+           $(".delItem").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+    </script>
+}

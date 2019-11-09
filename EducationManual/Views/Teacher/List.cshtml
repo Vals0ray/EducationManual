@@ -1,0 +1,82 @@
+﻿@model IEnumerable<EducationManual.Models.ApplicationUser>
+@using EducationManual.Models;
+
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
+<p>
+    <h4>Teachers</h4>
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.School.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.School.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PhoneNumber)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", "User", new { userId = item.Id }, null)
+                @if (!User.IsInRole("Teacher"))
+                {
+                    @Html.Label(" | ")
+                    @Html.ActionLink("Update", "Update", new { id = item.Id })
+                    @Html.Label(" | ")
+                    @Html.ActionLink("Delete", "Delete", item, new { @class = "delItem" })
+                }
+            </td>
+        </tr>
+    }
+
+</table>
+
+@if (!User.IsInRole("Teacher"))
+{
+    <p>
+        @Html.ActionLink("Create new teacher", "Register", "Account", new { schoolId = DataSave.SchoolId, role = "Teacher" }, "")
+    </p>
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+           $(".delItem").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+    </script>
+}

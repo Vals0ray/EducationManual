@@ -1,0 +1,19 @@
+﻿@model EducationManual.Models.School
+
+<h4>Create new school</h4>
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        @Html.ValidationSummary(true, "")
+        <p>Name:  @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })</p>
+        <p><input type="submit" value="Add" /></p>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "List")
+</div>
