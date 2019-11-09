@@ -1,10 +1,38 @@
 ﻿@using Microsoft.AspNet.Identity
+@using EducationManual.Models
 @if (Request.IsAuthenticated)
 {
     <ul class="nav navbar-nav">
-        <li>
-            @Html.ActionLink("Classrooms", "Classrooms", "Home")
-        </li>
+        @if (User.IsInRole("SuperAdmin"))
+        {
+            <li>
+                @Html.ActionLink("Schools", "List", "School")
+            </li>
+            <li>
+                <a>@DataSave.SchoolName</a>
+            </li>
+            if (DataSave.SchoolName != "")
+            {
+                <li>
+                    @Html.ActionLink("Classrooms", "List", "Classroom")
+                </li>
+                <li>
+                    @Html.ActionLink("Teachers", "List", "Teacher")
+                </li>
+            }
+        }
+        else if (User.IsInRole("SchoolAdmin") || User.IsInRole("Teacher"))
+        {
+            <li>
+                <a>@DataSave.SchoolName</a>
+            </li>
+            <li>
+                @Html.ActionLink("Classrooms", "List", "Classroom")
+            </li>
+            <li>
+                @Html.ActionLink("Teachers", "List", "Teacher")
+            </li>
+        }
     </ul>
 
     using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
@@ -21,10 +49,6 @@
 }
 else
 {
-    <ul class="nav navbar-nav">
-        <li>@Html.ActionLink("Classrooms", "Login", "Account")</li>
-    </ul>
-
     <ul class="nav navbar-nav navbar-right">
         <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
         <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>

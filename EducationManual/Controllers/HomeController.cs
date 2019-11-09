@@ -1,48 +1,38 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using EducationManual.Models;
+using EducationManual.Services;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
-using EducationManual.Models;
 
 namespace EducationManual.Controllers
 {
     public class HomeController : Controller
     {
+        private ApplicationUserManager UserManager =>
+            HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
-        private ApplicationContext db = new ApplicationContext();
+        private readonly ISchoolService _schoolService;
 
-        public List<Classroom> _Classrooms { get; set; }
-
-        public ActionResult Index(string arg)
+        public HomeController(ISchoolService schoolService)
         {
+            _schoolService = schoolService;
+        }
+
+        public async Task<ActionResult> Index(string arg)
+        {
+            if (!User.IsInRole("SuperAdmin"))
+            {
+                var userId = User.Identity.GetUserId();
+                var currentUser = await UserManager.FindByIdAsync(userId);
+                var school = await _schoolService.GetSchoolAsync((int)currentUser.SchoolId);
+
+                DataSave.SchoolName = school.Name;
+                DataSave.SchoolId = school.SchoolId;
+            }
+
             return View();
-        }
-
-        [Authorize]
-        public ActionResult Classrooms()
-        {
-            _Classrooms = db.Classrooms.ToList();
-
-            foreach (var cr in _Classrooms)
-            {
-                cr.Students = db.Students.Where(s => s.ClassroomId == cr.Id).ToList();
-            }
-
-            return View(_Classrooms);
-        }
-
-        [Authorize]
-        public ActionResult Students(int id)
-        {
-            _Classrooms = db.Classrooms.ToList();
-
-            foreach (var cr in _Classrooms)
-            {
-                cr.Students = db.Students.Where(s => s.ClassroomId == cr.Id).ToList();
-            }
-
-            var students = _Classrooms.FirstOrDefault(c => c.Id == id).Students;
-
-            return View(students.ToList());
         }
     }
 }
