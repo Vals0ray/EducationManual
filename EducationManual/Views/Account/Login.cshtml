@@ -16,16 +16,12 @@
         <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
         <p>
             <label>Email</label><br />
-            @Html.EditorFor(x => x.Email)
+            @Html.EditorFor(x => x.Email, new { htmlAttributes = new { @class = "form-control" } })
         </p>
         <p>
             <label>Password</label><br />
-            @Html.EditorFor(x => x.Password)
+            @Html.EditorFor(x => x.Password, new { htmlAttributes = new { @class = "form-control" } })
         </p>
         <p><button type="submit">Submit</button></p>
     </div>
 }
-
-<div>
-    <p>@Html.ActionLink("Don't have an account yet?", "Register", "Account")</p>
-</div>

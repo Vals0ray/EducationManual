@@ -1,0 +1,80 @@
+﻿@model IEnumerable<EducationManual.Models.School>
+@using System.Linq;
+
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
+<p>
+    <h4>Schools</h4>
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.SchoolId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            School admin
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Classrooms)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SchoolId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @if (!item.SchoolAdminId.IsEmpty())
+                {
+                    <div>@Html.DisplayFor(modelItem => item.ApplicationUsers.Single(u => u.Id == item.SchoolAdminId).UserName)</div>
+                }
+                else
+                {
+                    <div>-</div>
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Classrooms.Count)
+            </td>
+            <td>
+                @Html.ActionLink("Select", "List", "Classroom", new { id = item.SchoolId }, null) |
+                @Html.ActionLink("Update", "Update", new { id = item.SchoolId }) |
+                @Html.ActionLink("Delete", "Delete", item, new { @class = "delItem" })
+            </td>
+        </tr>
+    }
+</table>
+
+<p>
+    @Html.ActionLink("Create New School", "Create")
+</p>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+           $(".delItem").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+    </script>
+}

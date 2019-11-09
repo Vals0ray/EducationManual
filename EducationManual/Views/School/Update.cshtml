@@ -1,0 +1,78 @@
+﻿@model EducationManual.ViewModels.SchoolViewModel
+
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Update school: @Model.Name</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.SchoolAdmin.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">School admin</label>
+
+            <div class="col-md-10">
+                @if (Model.SchoolAdmin != null)
+                {
+                    @Html.DisplayFor(model => model.SchoolAdmin.UserName, new { htmlAttributes = new { @class = "form-control" } })
+                    <label></label>
+                    @Html.ActionLink("Details", "Details", "User", new { userId = Model.SchoolAdmin.Id }, null)
+                    <label></label>
+                    @Html.ActionLink("Delete this admin", "DeleteAdmin", new { userId = Model.SchoolAdmin.Id }, new { @class = "delItem" })
+                    <label></label>
+                }
+                else
+                {
+                    <label>null</label>
+                }
+
+                @Html.ActionLink("Create new admin", "Register", "Account", new { schoolId = Model.Id, role = "SchoolAdmin" }, null)
+
+                @Html.ValidationMessageFor(model => model.SchoolAdmin.UserName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "List")
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(function () {
+            $.ajaxSetup({ cache: false });
+           $(".delItem").click(function (e) {
+
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                });
+            });
+        })
+    </script>
+}
