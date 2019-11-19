@@ -1,15 +1,17 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace EducationManual.Models
+namespace EducationManual.ViewModels
 {
     public class RegisterModel
     {
         [Required]
-        public string Email { get; set; }
+        public string FirstName { get; set; }
 
         [Required]
-        public int Year { get; set; }
+        public string SecondName { get; set; }
+
+        [Required]
+        public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

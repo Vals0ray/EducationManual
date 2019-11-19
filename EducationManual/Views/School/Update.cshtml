@@ -29,9 +29,9 @@
             <div class="col-md-10">
                 @if (Model.SchoolAdmin != null)
                 {
-                    @Html.DisplayFor(model => model.SchoolAdmin.UserName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.DisplayFor(model => model.SchoolAdmin.FirstName, new { htmlAttributes = new { @class = "form-control" } })
                     <label></label>
-                    @Html.ActionLink("Details", "Details", "User", new { userId = Model.SchoolAdmin.Id }, null)
+                    @Html.DisplayFor(model => model.SchoolAdmin.SecondName, new { htmlAttributes = new { @class = "form-control" } })
                     <label></label>
                     @Html.ActionLink("Delete this admin", "DeleteAdmin", new { userId = Model.SchoolAdmin.Id }, new { @class = "delItem" })
                     <label></label>

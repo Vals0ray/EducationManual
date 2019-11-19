@@ -26,15 +26,18 @@ namespace EducationManual.Repositories
             return result;
         }
 
-        public async Task DeleteStudentAsync(int id)
+        public async Task DeleteStudentAsync(string id)
         {
             using (var db = new ApplicationContext())
             {
-                var student = await db.Students.FirstOrDefaultAsync(u => u.StudentId == id);
+                var student = await db.Students.Include(s => s.ApplicationUser)
+                                               .FirstOrDefaultAsync(u => u.Id == id);
 
                 db.Entry(student).State = EntityState.Deleted;
 
                 await db.SaveChangesAsync();
+
+                await DeleteUserAsync(id);
             }
         }
 
@@ -50,13 +53,14 @@ namespace EducationManual.Repositories
             }
         }
 
-        public async Task<Student> GetStudentAsync(int id)
+        public async Task<Student> GetStudentAsync(string id)
         {
             Student result = null;
 
             using (var db = new ApplicationContext())
             {
-                result = await db.Students.FirstOrDefaultAsync(s => s.StudentId == id);
+                result = await db.Students.Include(s => s.ApplicationUser)
+                                          .FirstOrDefaultAsync(s => s.Id == id);
             }
 
             return result;
@@ -69,8 +73,9 @@ namespace EducationManual.Repositories
             using (var db = new ApplicationContext())
             {
                 result = await db.Students.Include(s => s.Classroom)
-                                    .Where(s => s.ClassroomId == id)
-                                    .ToListAsync();
+                                          .Include(s => s.ApplicationUser)
+                                          .Where(s => s.ClassroomId == id)
+                                          .ToListAsync();
             }
 
             return result;
@@ -112,16 +117,5 @@ namespace EducationManual.Repositories
 
             return user;
         }
-
-        //public Task<ApplicationUser> GetUserByIdAsync(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-
-        //public Task<ApplicationUser> GetUserByRoleAsync(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

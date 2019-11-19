@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using EducationManual.Models;
 using EducationManual.Services;
+using EducationManual.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -24,12 +26,13 @@ namespace EducationManual.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
-        public ActionResult Register(int schoolId, string role = null)
+        public ActionResult Register(int schoolId, int? classroomId = null, string role = null)
         {
             if (role != null)
             {
                 ViewBag.SchoolId = schoolId;
                 ViewBag.Role = role;
+                ViewBag.ClassroomId = classroomId;
                 return View();
             }
 
@@ -37,17 +40,28 @@ namespace EducationManual.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Register(RegisterModel model, int schoolId, string role)
+        public async Task<ActionResult> Register(RegisterModel model, string role, int schoolId, int? classroomId = null)
         {
             if (ModelState.IsValid)
-            {
-                ApplicationUser user = new ApplicationUser { UserName = model.Email, Email = model.Email, SchoolId = schoolId };
-                IdentityResult result = await UserManager.CreateAsync(user, model.Password);
+            {       
+                IdentityResult result = null;
+
+                ApplicationUser user = new ApplicationUser();
+
+                user = new ApplicationUser
+                {
+                    FirstName = model.FirstName,
+                    SecondName = model.SecondName,
+                    UserName = model.Email,
+                    Email = model.Email,
+                    SchoolId = schoolId
+                };
+
+                result = await UserManager.CreateAsync(user, model.Password);
+                await UserManager.AddToRoleAsync(user.Id, role);
 
                 if (result.Succeeded)
                 {
-                    await UserManager.AddToRoleAsync(user.Id, role);
-
                     if (role == "SchoolAdmin")
                     {
                         return RedirectToAction("Update", "School", new { id = schoolId, newSchoolAdminId = user.Id });
@@ -55,6 +69,20 @@ namespace EducationManual.Controllers
                     else if (role == "Teacher")
                     {
                         return RedirectToAction("List", "Teacher", new { id = schoolId, newSchoolAdminId = user.Id });
+                    }
+                    else if (role == "Student")
+                    {
+                        using (ApplicationContext db = new ApplicationContext())
+                        {
+                            Student student = new Student()
+                            {
+                                Id = user.Id,
+                                ClassroomId = classroomId
+                            };
+                            db.Students.Add(student);
+                            db.SaveChanges();
+                        }
+                        return RedirectToAction("List", "Student", new { id = classroomId });
                     }
                 }
                 else

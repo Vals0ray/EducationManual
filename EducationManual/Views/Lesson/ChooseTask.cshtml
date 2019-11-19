@@ -1,0 +1,24 @@
+﻿@model IEnumerable<EducationManual.Models.TaskForStudent>
+
+<p>
+    <h4>
+        Choose task for student
+    </h4>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Test Name
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.Name, "ChooseStudent", new { classroomId = ViewBag.ClassroomId, studentId = ViewBag.StudentId, testId = item.TaskId })
+            </td>
+        </tr>
+    }
+
+</table>

@@ -41,43 +41,6 @@ namespace EducationManual.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
-        public async Task<ActionResult> Update(string id)
-        {
-            if (id == null) return HttpNotFound();
-
-            var user = await _userService.GetUserAsync(id);
-
-            if (user != null)
-            {
-                return View(user);
-            }
-
-            return HttpNotFound();
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
-        public async Task<ActionResult> Update(ApplicationUser user)
-        {
-            if (user != null)
-            {
-                var result = await _userService.GetUserAsync(user.Id);
-                if (result != null)
-                {
-                    result.Email = user.Email;
-                    result.PhoneNumber = user.PhoneNumber;
-                    result.UserName = user.UserName;
-
-                    await _userService.UpdateUserAsync(result);
-
-                    return RedirectToAction("List");
-                }
-            }
-
-            return HttpNotFound();
-        }
-
-        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
         public ActionResult Delete(ApplicationUser user)
         {
             if (user == null) return HttpNotFound();
