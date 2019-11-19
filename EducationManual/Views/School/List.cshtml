@@ -21,6 +21,9 @@
             School admin
         </th>
         <th>
+            Teachers
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Classrooms)
         </th>
         <th></th>
@@ -33,12 +36,15 @@
                 @Html.DisplayFor(modelItem => item.SchoolId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.ActionLink(item.Name, "List", "Classroom", new { id = item.SchoolId }, null)
             </td>
             <td>
                 @if (!item.SchoolAdminId.IsEmpty())
                 {
-                    <div>@Html.DisplayFor(modelItem => item.ApplicationUsers.Single(u => u.Id == item.SchoolAdminId).UserName)</div>
+                    <a href="/User/Details?userId=@item.SchoolAdminId&returnURL=@Request.Url">
+                        @Html.DisplayFor(modelItem => item.ApplicationUsers.Single(u => u.Id == item.SchoolAdminId).FirstName)
+                        @Html.DisplayFor(modelItem => item.ApplicationUsers.Single(u => u.Id == item.SchoolAdminId).SecondName)
+                    </a>
                 }
                 else
                 {
@@ -46,10 +52,12 @@
                 }
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.ApplicationUsers.Count)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Classrooms.Count)
             </td>
             <td>
-                @Html.ActionLink("Select", "List", "Classroom", new { id = item.SchoolId }, null) |
                 @Html.ActionLink("Update", "Update", new { id = item.SchoolId }) |
                 @Html.ActionLink("Delete", "Delete", item, new { @class = "delItem" })
             </td>

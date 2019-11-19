@@ -11,6 +11,8 @@ namespace EducationManual.Models
 
         public DbSet<Student> Students { get; set; }
 
+        public DbSet<TaskForStudent> TaskForStudents { get; set; }
+
         public ApplicationContext() : base("IdentityDb") { }
 
         public static ApplicationContext Create()

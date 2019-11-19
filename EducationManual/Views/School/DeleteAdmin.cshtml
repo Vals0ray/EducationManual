@@ -14,7 +14,11 @@
             <h4>Delete admin</h4>
         </div>
         <div class="modal-body">
-            <p>Realy delete admin @Html.DisplayFor(model => model.UserName) ?</p>
+            <p>
+                Realy delete admin 
+                @Html.DisplayFor(model => model.FirstName)
+                @Html.DisplayFor(model => model.SecondName)?
+            </p>
         </div>
         <div class="modal-footer">
             <input type="hidden" value="@Model.Id" name="Id" />

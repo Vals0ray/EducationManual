@@ -1,0 +1,30 @@
+﻿@model IEnumerable<EducationManual.Models.Classroom>
+
+<p>
+    <h4>
+        Choose classroom
+    </h4>
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Students)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink(item.Name, "ChooseStudent", new { classroomId = item.ClassroomId })
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Students.Count)
+        </td>
+    </tr>
+}
+
+</table>

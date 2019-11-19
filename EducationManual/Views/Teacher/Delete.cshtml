@@ -13,7 +13,11 @@
             <h4>Delete teacher</h4>
         </div>
         <div class="modal-body">
-            <p>Realy delete teacher @Html.DisplayFor(model => model.UserName) ?</p>
+            <p>Realy delete teacher 
+                @Html.DisplayFor(model => model.FirstName)
+                @Html.DisplayFor(model => model.FirstName)
+                ?
+            </p>
         </div>
         <div class="modal-footer">
             <input type="hidden" value="@Model.Id" name="Id" />

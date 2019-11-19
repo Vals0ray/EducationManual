@@ -22,7 +22,7 @@ namespace EducationManual.Services
             return await _userRepository.AddStudentAsync(student);
         }
 
-        public async Task DeleteStudentAsync(int id)
+        public async Task DeleteStudentAsync(string id)
         {
             await _userRepository.DeleteStudentAsync(id);
         }
@@ -32,7 +32,7 @@ namespace EducationManual.Services
             await _userRepository.DeleteUserAsync(id);
         }
 
-        public async Task<Student> GetStudentAsync(int id)
+        public async Task<Student> GetStudentAsync(string id)
         {
             return await _userRepository.GetStudentAsync(id);
         }

@@ -1,11 +1,6 @@
 ﻿using EducationManual.Models;
-using EducationManual.ViewModels;
 using EducationManual.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace EducationManual.Controllers
@@ -34,42 +29,6 @@ namespace EducationManual.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
-        public async Task<ActionResult> Update(int? id)
-        {
-            if (id == null) return HttpNotFound();
-
-            var student = await _userService.GetStudentAsync((int)id);
-
-            if (student != null)
-            {
-                return View(student);
-            }
-
-            return HttpNotFound();
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
-        public async Task<ActionResult> Update(Student student)
-        {
-            if (student != null)
-            {
-                var result = await _userService.GetStudentAsync(student.StudentId);
-                if (result != null)
-                {
-                    result.FirstName = student.FirstName;
-                    result.SecondName = student.SecondName;
-
-                    await _userService.UpdateStudentAsync(result);
-
-                    return RedirectToAction("List", new { id = result.ClassroomId });
-                }
-            }
-
-            return HttpNotFound();
-        }
-
-        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
         public ActionResult Create(int classroomId)
         {
             ViewBag.ClassroomId = classroomId;
@@ -78,37 +37,13 @@ namespace EducationManual.Controllers
 
         [HttpPost]
         [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
-        public async Task<ActionResult> Create(StudentViewModel model, int classroomId)
-        {
-            Student student = new Student()
-            {
-                FirstName = model.FirstName,
-                SecondName = model.SecondName,
-                ClassroomId = classroomId
-            };
-
-            await _userService.AddStudentAsync(student);
-
-            return RedirectToAction("List", new { id = classroomId });
-        }
-
-        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
-        public ActionResult Delete(Student student)
-        {
-            if (student == null) return HttpNotFound();
-
-            return View(student);
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
-        public async Task<ActionResult> Delete(int? id)
+        public async Task<ActionResult> Delete(string id)
         {
             if (id == null) return HttpNotFound();
 
-            Student student = await _userService.GetStudentAsync((int)id);
+            Student student = await _userService.GetStudentAsync(id);
 
-            await _userService.DeleteStudentAsync((int)id);
+            await _userService.DeleteStudentAsync(id);
 
             return RedirectToAction("List", new { id = student.ClassroomId });
         }

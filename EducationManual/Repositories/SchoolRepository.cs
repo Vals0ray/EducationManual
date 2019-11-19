@@ -42,8 +42,8 @@ namespace EducationManual.Repositories
             using (var db = new ApplicationContext())
             {
                 result = await db.Schools.Include(s => s.ApplicationUsers)
-                                    .Include(s => s.Classrooms.Select(c => c.Students))
-                                    .ToListAsync();
+                                         .Include(s => s.Classrooms)
+                                         .ToListAsync();
             }
 
             return result;
@@ -53,7 +53,9 @@ namespace EducationManual.Repositories
         {
             using (var db = new ApplicationContext())
             {
-                var school = await db.Schools.FirstOrDefaultAsync(s => s.SchoolId == id);
+                var school = await db.Schools.Include(u => u.ApplicationUsers)
+                                             .Include(s => s.Classrooms.Select(c => c.Students))
+                                             .FirstOrDefaultAsync(s => s.SchoolId == id);
 
                 db.Entry(school).State = EntityState.Deleted;
 

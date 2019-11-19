@@ -1,7 +1,6 @@
 using EducationManual.Repositories;
 using EducationManual.Services;
 using System;
-
 using Unity;
 
 namespace EducationManual
@@ -25,6 +24,9 @@ namespace EducationManual
 
               container.RegisterType<IUserRepository, UserRepository>();
               container.RegisterType<IUserService, UserService>();
+
+              container.RegisterType<ITaskRepository, TaskRepository>();
+              container.RegisterType<ITaskService, TaskService>();
 
               RegisterTypes(container);
               return container;

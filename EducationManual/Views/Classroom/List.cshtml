@@ -29,18 +29,17 @@
                 @Html.DisplayFor(modelItem => item.ClassroomId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.ActionLink(item.Name, "List", "Student", new { id = item.ClassroomId }, null)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Students.Count)
             </td>
             <td>
-                @Html.ActionLink("Select", "List", "Student", new { id = item.ClassroomId }, null)
+                
                 @if (!User.IsInRole("Teacher"))
                 {
-                    @Html.Label(" | ")
                     @Html.ActionLink("Update", "Update", new { id = item.ClassroomId })
-                    @Html.Label(" | ")
+                    <label>|</label>
                     @Html.ActionLink("Delete", "Delete", item, new { @class = "delItem" })
                 }
             </td>

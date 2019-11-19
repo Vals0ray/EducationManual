@@ -3,6 +3,8 @@ using Owin;
 using EducationManual.Models;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.AspNet.Identity;
+using EducationManual.Hubs;
+using Microsoft.AspNet.SignalR;
 
 [assembly: OwinStartup(typeof(EducationManual.App_Start.Startup))]
 
@@ -12,6 +14,10 @@ namespace EducationManual.App_Start
     {
         public void Configuration(IAppBuilder app)
         {
+            var idProvider = new CustomUserIdProvider();
+
+            GlobalHost.DependencyResolver.Register(typeof(IUserIdProvider), () => idProvider);
+
             app.CreatePerOwinContext<ApplicationContext>(ApplicationContext.Create);
 
             //ApplicationContext db = new ApplicationContext();
@@ -27,6 +33,8 @@ namespace EducationManual.App_Start
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString("/Account/Login"),
             });
+
+            app.MapSignalR();
         }
     }
 }

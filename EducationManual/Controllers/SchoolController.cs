@@ -25,7 +25,7 @@ namespace EducationManual.Controllers
         public async Task<ActionResult> List()
         {
             var schools = await _schoolService.GetSchoolsAsync();
-            
+
             DataSave.SchoolName = "";
             return View(schools);
         }
@@ -50,9 +50,11 @@ namespace EducationManual.Controllers
         }
 
         // Update existing school
-        public async Task<ActionResult> Update(int id, string newSchoolAdminId = null)
+        public async Task<ActionResult> Update(int? id, string newSchoolAdminId = null)
         {
-            School school = await _schoolService.GetSchoolAsync(id);
+            if (id == null) return HttpNotFound();
+
+            School school = await _schoolService.GetSchoolAsync((int)id);
 
             SchoolViewModel schoolViewModel = new SchoolViewModel()
             {

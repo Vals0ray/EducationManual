@@ -1,0 +1,44 @@
+﻿@model IEnumerable<EducationManual.ViewModels.LessonViewModel>
+
+<p>
+    <h4>
+        Classroom: @ViewBag.ClassroomName
+        Choose tasks for students
+    </h4>
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            Student
+        </th>
+        <th>
+            Task
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(iteme => item.Student.ApplicationUser.FirstName)
+
+            @Html.DisplayFor(iteme => item.Student.ApplicationUser.SecondName)
+        </td>
+        <td>
+            @if (item.TestId == null)
+            {
+                @Html.ActionLink("Select", "ChooseTask", new { studentId = item.Student.Id, classroomId = ViewBag.ClassroomId })
+            }
+            else
+            {
+                @Html.DisplayFor(iteme => item.TestId)
+            }
+        </td>
+    </tr>
+}
+
+</table>
+
+<p>
+    @Html.ActionLink("Start Lesson", "StartLesson")
+</p>
