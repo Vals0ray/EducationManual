@@ -18,11 +18,11 @@ namespace EducationManual.Repositories
 
         Task<IEnumerable<Student>> GetStudentsAsync(int id);
 
-        Task<Student> GetStudentAsync(int id);
+        Task<Student> GetStudentAsync(string id);
 
         Task<Student> AddStudentAsync(Student student);
 
-        Task DeleteStudentAsync(int id);
+        Task DeleteStudentAsync(string id);
 
         Task<Student> UpdateStudentAsync(Student student);
 

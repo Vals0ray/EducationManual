@@ -1,5 +1,5 @@
-﻿@model IEnumerable<EducationManual.Models.Student>
-@using EducationManual.Models;
+﻿@using EducationManual.Models;
+@model IEnumerable<Student>
 
 <div id="modDialog" class="modal fade">
     <div id="dialogContent" class="modal-dialog"></div>
@@ -12,10 +12,10 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.FirstName)
+            @Html.DisplayNameFor(model => model.ApplicationUser.FirstName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.SecondName)
+            @Html.DisplayNameFor(model => model.ApplicationUser.SecondName)
         </th>
         <th></th>
     </tr>
@@ -24,18 +24,15 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
+                @Html.DisplayFor(modelItem => item.ApplicationUser.FirstName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SecondName)
+                @Html.DisplayFor(modelItem => item.ApplicationUser.SecondName)
             </td>
             <td>
-                @Html.ActionLink("Details", "Details", new { id = item.StudentId })
+                @Html.ActionLink("Details", "Details", "User", new { userId = item.ApplicationUser.Id, returnURL = Request.Url }, null)
                 @if (!User.IsInRole("Teacher"))
                 {
-                    @Html.Label(" | ")
-                    @Html.ActionLink("Update", "Update", new { id = item.StudentId })
-                    @Html.Label(" | ")
                     @Html.ActionLink("Delete", "Delete", item, new { @class = "delItem" })
                 }
             </td>
@@ -47,7 +44,7 @@
 @if (!User.IsInRole("Teacher"))
 {
     <p>
-        @Html.ActionLink("Create new student", "Create", new { classroomId = ViewBag.ClassroomId })
+        @Html.ActionLink("Create new student", "Register", "Account", new { schoolId = DataSave.SchoolId, classroomId = ViewBag.ClassroomId, role = "Student" }, "")
     </p>
 }
 
@@ -57,7 +54,7 @@
 
         $(function () {
             $.ajaxSetup({ cache: false });
-           $(".delItem").click(function (e) {
+            $(".delItem").click(function (e) {
 
                 e.preventDefault();
                 $.get(this.href, function (data) {

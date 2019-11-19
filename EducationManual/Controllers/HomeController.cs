@@ -22,7 +22,7 @@ namespace EducationManual.Controllers
 
         public async Task<ActionResult> Index(string arg)
         {
-            if (!User.IsInRole("SuperAdmin"))
+            if (!User.IsInRole("SuperAdmin") && User.Identity.IsAuthenticated)
             {
                 var userId = User.Identity.GetUserId();
                 var currentUser = await UserManager.FindByIdAsync(userId);

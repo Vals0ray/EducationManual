@@ -2,6 +2,31 @@
     ViewBag.Title = "Main page";
 }
 
+<div><span id="notification" style="color:red;font-size:15px;"></span></div>
+
+@*@Html.Hidden("RedirectTo", Url.Action("Index", "Task", new { taskId = }));*@
+
 <h2>Main page</h2>
 
 <p>Some text........</p>
+
+@section scripts{
+    <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script type="text/javascript">
+    $(function () {
+
+        var notificationhub = $.connection.notificationHub;
+
+        notificationhub.client.displayMessage = function (message) {
+            // var url = $('#RedirectTo').val();
+            //location.href = url;
+            var url = '@Url.Action("Index", "Task", new { taskId = "__id__" })';
+            window.location.href = url.replace('__id__', message);
+        };
+
+        $.connection.hub.start();
+
+    });
+    </script>
+}

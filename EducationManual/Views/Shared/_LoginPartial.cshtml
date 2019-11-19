@@ -8,11 +8,29 @@
             <li>
                 @Html.ActionLink("Schools", "List", "School")
             </li>
-            <li>
-                <a>@DataSave.SchoolName</a>
-            </li>
-            if (DataSave.SchoolName != "")
+            if (DataSave.SchoolName == "")
             {
+                <li>
+                    @Html.ActionLink("SuperAdmins", "List", "User", new { usersRole = "SuperAdmin" }, null)
+                </li>
+                <li>
+                    @Html.ActionLink("SchoolAdmins", "List", "User", new { usersRole = "SchoolAdmin" }, null)
+                </li>
+                <li>
+                    @Html.ActionLink("Teachers", "List", "User", new { usersRole = "Teacher" }, null)
+                </li>
+                <li>
+                    @Html.ActionLink("Students", "List", "User", new { usersRole = "Student" }, null)
+                </li>
+                <li>
+                    <a>@DataSave.SchoolName</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a>@DataSave.SchoolName</a>
+                </li>
                 <li>
                     @Html.ActionLink("Classrooms", "List", "Classroom")
                 </li>
@@ -32,6 +50,9 @@
             <li>
                 @Html.ActionLink("Teachers", "List", "Teacher")
             </li>
+            <li>
+                @Html.ActionLink("Create lesson", "ChooseClassroom", "Lesson")
+            </li>
         }
     </ul>
 
@@ -41,7 +62,7 @@
 
         <ul class="nav navbar-nav navbar-right">
             <li>
-                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Details", "User", routeValues: new { userId = User.Identity.GetUserId(), returnURL = Request.Url }, htmlAttributes: new { title = "Manage" })
             </li>
             <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
         </ul>

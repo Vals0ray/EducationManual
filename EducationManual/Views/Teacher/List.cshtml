@@ -12,10 +12,10 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.School.Name)
+            First name
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.UserName)
+            Second name
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Email)
@@ -30,10 +30,10 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.School.Name)
+                @Html.DisplayFor(modelItem => item.FirstName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UserName)
+                @Html.DisplayFor(modelItem => item.SecondName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Email)
@@ -42,12 +42,9 @@
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
             <td>
-                @Html.ActionLink("Details", "Details", "User", new { userId = item.Id }, null)
+                @Html.ActionLink("Details", "Details", "User", new { userId = item.Id, returnURL = Request.Url }, null) | 
                 @if (!User.IsInRole("Teacher"))
                 {
-                    @Html.Label(" | ")
-                    @Html.ActionLink("Update", "Update", new { id = item.Id })
-                    @Html.Label(" | ")
                     @Html.ActionLink("Delete", "Delete", item, new { @class = "delItem" })
                 }
             </td>
