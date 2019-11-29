@@ -196,117 +196,17 @@
     </Compile>
     <Compile Include="Hubs\CustomUserIdProvider.cs" />
     <Compile Include="Hubs\NotificationHub.cs" />
-    <Compile Include="Migrations\201910201454509_InitialCreate.cs" />
-    <Compile Include="Migrations\201910201454509_InitialCreate.Designer.cs">
-      <DependentUpon>201910201454509_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\201911282110018_DataMigration.cs" />
+    <Compile Include="Migrations\201911282110018_DataMigration.designer.cs">
+      <DependentUpon>201911282110018_DataMigration.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201910211251555_DataMigration.cs" />
-    <Compile Include="Migrations\201910211251555_DataMigration.Designer.cs">
-      <DependentUpon>201910211251555_DataMigration.cs</DependentUpon>
+    <Compile Include="Migrations\201911282131524_AddPostAbstract.cs" />
+    <Compile Include="Migrations\201911282131524_AddPostAbstract.designer.cs">
+      <DependentUpon>201911282131524_AddPostAbstract.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201910211537236_DataMigration1.cs" />
-    <Compile Include="Migrations\201910211537236_DataMigration1.Designer.cs">
-      <DependentUpon>201910211537236_DataMigration1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910301336280_DataMigration2.cs" />
-    <Compile Include="Migrations\201910301336280_DataMigration2.Designer.cs">
-      <DependentUpon>201910301336280_DataMigration2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911011653414_DataMigration3.cs" />
-    <Compile Include="Migrations\201911011653414_DataMigration3.Designer.cs">
-      <DependentUpon>201911011653414_DataMigration3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911021433146_DataMigration4.cs" />
-    <Compile Include="Migrations\201911021433146_DataMigration4.Designer.cs">
-      <DependentUpon>201911021433146_DataMigration4.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911021443447_DataMigration5.cs" />
-    <Compile Include="Migrations\201911021443447_DataMigration5.Designer.cs">
-      <DependentUpon>201911021443447_DataMigration5.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911021447336_DataMigration6.cs" />
-    <Compile Include="Migrations\201911021447336_DataMigration6.Designer.cs">
-      <DependentUpon>201911021447336_DataMigration6.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911021454144_DataMigration7.cs" />
-    <Compile Include="Migrations\201911021454144_DataMigration7.Designer.cs">
-      <DependentUpon>201911021454144_DataMigration7.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911021454356_DataMigration8.cs" />
-    <Compile Include="Migrations\201911021454356_DataMigration8.Designer.cs">
-      <DependentUpon>201911021454356_DataMigration8.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911021456019_DataMigration9.cs" />
-    <Compile Include="Migrations\201911021456019_DataMigration9.Designer.cs">
-      <DependentUpon>201911021456019_DataMigration9.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911021521244_DataMigration10.cs" />
-    <Compile Include="Migrations\201911021521244_DataMigration10.Designer.cs">
-      <DependentUpon>201911021521244_DataMigration10.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911021526062_DataMigration11.cs" />
-    <Compile Include="Migrations\201911021526062_DataMigration11.Designer.cs">
-      <DependentUpon>201911021526062_DataMigration11.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911021604403_DataMigration12.cs" />
-    <Compile Include="Migrations\201911021604403_DataMigration12.Designer.cs">
-      <DependentUpon>201911021604403_DataMigration12.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911021722508_DataMigration13.cs" />
-    <Compile Include="Migrations\201911021722508_DataMigration13.Designer.cs">
-      <DependentUpon>201911021722508_DataMigration13.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911021724520_DataMigration14.cs" />
-    <Compile Include="Migrations\201911021724520_DataMigration14.Designer.cs">
-      <DependentUpon>201911021724520_DataMigration14.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911021725259_DataMigration15.cs" />
-    <Compile Include="Migrations\201911021725259_DataMigration15.Designer.cs">
-      <DependentUpon>201911021725259_DataMigration15.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911061523099_DataMigration16.cs" />
-    <Compile Include="Migrations\201911061523099_DataMigration16.Designer.cs">
-      <DependentUpon>201911061523099_DataMigration16.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911061536462_DataMigration17.cs" />
-    <Compile Include="Migrations\201911061536462_DataMigration17.Designer.cs">
-      <DependentUpon>201911061536462_DataMigration17.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911061639423_DataMigration18.cs" />
-    <Compile Include="Migrations\201911061639423_DataMigration18.Designer.cs">
-      <DependentUpon>201911061639423_DataMigration18.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911061642291_DataMigration19.cs" />
-    <Compile Include="Migrations\201911061642291_DataMigration19.Designer.cs">
-      <DependentUpon>201911061642291_DataMigration19.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911071404282_DataMigration20.cs" />
-    <Compile Include="Migrations\201911071404282_DataMigration20.designer.cs">
-      <DependentUpon>201911071404282_DataMigration20.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911091322221_DataMigration21.cs" />
-    <Compile Include="Migrations\201911091322221_DataMigration21.designer.cs">
-      <DependentUpon>201911091322221_DataMigration21.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911121108371_DataMigration22.cs" />
-    <Compile Include="Migrations\201911121108371_DataMigration22.designer.cs">
-      <DependentUpon>201911121108371_DataMigration22.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911121234479_DataMigration23.cs" />
-    <Compile Include="Migrations\201911121234479_DataMigration23.designer.cs">
-      <DependentUpon>201911121234479_DataMigration23.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911121339118_DataMigration24.cs" />
-    <Compile Include="Migrations\201911121339118_DataMigration24.designer.cs">
-      <DependentUpon>201911121339118_DataMigration24.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911121407359_DataMigration25.cs" />
-    <Compile Include="Migrations\201911121407359_DataMigration25.designer.cs">
-      <DependentUpon>201911121407359_DataMigration25.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201911141435122_DataMigration26.cs" />
-    <Compile Include="Migrations\201911141435122_DataMigration26.designer.cs">
-      <DependentUpon>201911141435122_DataMigration26.cs</DependentUpon>
+    <Compile Include="Migrations\201911282152465_AddPostAbstract1.cs" />
+    <Compile Include="Migrations\201911282152465_AddPostAbstract1.designer.cs">
+      <DependentUpon>201911282152465_AddPostAbstract1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationContext.cs" />
@@ -344,10 +244,6 @@
     <Compile Include="ViewModels\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\IdentityDb.mdf" />
-    <Content Include="App_Data\IdentityDb_log.ldf">
-      <DependentUpon>IdentityDb.mdf</DependentUpon>
-    </Content>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -358,6 +254,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Properties\PublishProfiles\EducationManual - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -408,6 +305,7 @@
     <Content Include="Views\Lesson\ChooseTask.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\" />
     <Folder Include="Views\Task\" />
   </ItemGroup>
   <ItemGroup>
@@ -424,89 +322,14 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201910201454509_InitialCreate.resx">
-      <DependentUpon>201910201454509_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201911282110018_DataMigration.resx">
+      <DependentUpon>201911282110018_DataMigration.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910211251555_DataMigration.resx">
-      <DependentUpon>201910211251555_DataMigration.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201911282131524_AddPostAbstract.resx">
+      <DependentUpon>201911282131524_AddPostAbstract.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910211537236_DataMigration1.resx">
-      <DependentUpon>201910211537236_DataMigration1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910301336280_DataMigration2.resx">
-      <DependentUpon>201910301336280_DataMigration2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911011653414_DataMigration3.resx">
-      <DependentUpon>201911011653414_DataMigration3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911021433146_DataMigration4.resx">
-      <DependentUpon>201911021433146_DataMigration4.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911021443447_DataMigration5.resx">
-      <DependentUpon>201911021443447_DataMigration5.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911021447336_DataMigration6.resx">
-      <DependentUpon>201911021447336_DataMigration6.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911021454144_DataMigration7.resx">
-      <DependentUpon>201911021454144_DataMigration7.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911021454356_DataMigration8.resx">
-      <DependentUpon>201911021454356_DataMigration8.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911021456019_DataMigration9.resx">
-      <DependentUpon>201911021456019_DataMigration9.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911021521244_DataMigration10.resx">
-      <DependentUpon>201911021521244_DataMigration10.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911021526062_DataMigration11.resx">
-      <DependentUpon>201911021526062_DataMigration11.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911021604403_DataMigration12.resx">
-      <DependentUpon>201911021604403_DataMigration12.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911021722508_DataMigration13.resx">
-      <DependentUpon>201911021722508_DataMigration13.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911021724520_DataMigration14.resx">
-      <DependentUpon>201911021724520_DataMigration14.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911021725259_DataMigration15.resx">
-      <DependentUpon>201911021725259_DataMigration15.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911061523099_DataMigration16.resx">
-      <DependentUpon>201911061523099_DataMigration16.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911061536462_DataMigration17.resx">
-      <DependentUpon>201911061536462_DataMigration17.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911061639423_DataMigration18.resx">
-      <DependentUpon>201911061639423_DataMigration18.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911061642291_DataMigration19.resx">
-      <DependentUpon>201911061642291_DataMigration19.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911071404282_DataMigration20.resx">
-      <DependentUpon>201911071404282_DataMigration20.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911091322221_DataMigration21.resx">
-      <DependentUpon>201911091322221_DataMigration21.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911121108371_DataMigration22.resx">
-      <DependentUpon>201911121108371_DataMigration22.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911121234479_DataMigration23.resx">
-      <DependentUpon>201911121234479_DataMigration23.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911121339118_DataMigration24.resx">
-      <DependentUpon>201911121339118_DataMigration24.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911121407359_DataMigration25.resx">
-      <DependentUpon>201911121407359_DataMigration25.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911141435122_DataMigration26.resx">
-      <DependentUpon>201911141435122_DataMigration26.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201911282152465_AddPostAbstract1.resx">
+      <DependentUpon>201911282152465_AddPostAbstract1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
