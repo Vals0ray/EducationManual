@@ -26,6 +26,7 @@ namespace EducationManual.Controllers
             {
                 var userId = User.Identity.GetUserId();
                 var currentUser = await UserManager.FindByIdAsync(userId);
+                if (currentUser == null) return RedirectToAction("Logout", "Account");
                 var school = await _schoolService.GetSchoolAsync((int)currentUser.SchoolId);
 
                 DataSave.SchoolName = school.Name;

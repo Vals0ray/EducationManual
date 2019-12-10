@@ -6,16 +6,18 @@
 </div>
 
 <p>
-    <h4>Teachers</h4>
+    <h3>Teachers</h3>
 </p>
 
-<table class="table">
+<br/>
+
+<table class="table table-striped table-hover ">
     <tr>
         <th>
-            First name
+            #
         </th>
         <th>
-            Second name
+            Name
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Email)
@@ -23,30 +25,27 @@
         <th>
             @Html.DisplayNameFor(model => model.PhoneNumber)
         </th>
-        <th></th>
     </tr>
 
+    @{ int i = 0;}
     @foreach (var item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
+                @{ ++i;}
+                @i
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SecondName)
+                <a href="/User/Details?userId=@item.Id&returnURL=@Request.Url">
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                    @Html.DisplayFor(modelItem => item.SecondName)
+                </a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-            <td>
-                @Html.ActionLink("Details", "Details", "User", new { userId = item.Id, returnURL = Request.Url }, null) | 
-                @if (!User.IsInRole("Teacher"))
-                {
-                    @Html.ActionLink("Delete", "Delete", item, new { @class = "delItem" })
-                }
             </td>
         </tr>
     }
@@ -56,7 +55,7 @@
 @if (!User.IsInRole("Teacher"))
 {
     <p>
-        @Html.ActionLink("Create new teacher", "Register", "Account", new { schoolId = DataSave.SchoolId, role = "Teacher" }, "")
+        @Html.ActionLink("Create new teacher", "Register", "Account", new { schoolId = DataSave.SchoolId, role = "Teacher" },  new { @class = "btn btn-default" })
     </p>
 }
 

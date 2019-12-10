@@ -18,10 +18,12 @@
                 </button>
                 @Html.ActionLink("Education Manual", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
-
-            @Html.Partial("_LoginPartial")
+            <div class="navbar-collapse collapse" id="bs-example-navbar-collapse-2" aria-expanded="false" style="height: 1px;">
+                @Html.Partial("_LoginPartial")
+            </div>
         </div>
     </div>
+    <br/>
     <div class="container body-content">
         @RenderBody()
         <hr />

@@ -25,11 +25,23 @@ namespace EducationManual.Repositories
         {
             using (var db = new ApplicationContext())
             {
-                var classroom = await db.Classrooms.FirstOrDefaultAsync(c => c.ClassroomId == id);
+                var classroom = await db.Classrooms.Include(c => c.Students)
+                                                   .FirstOrDefaultAsync(c => c.ClassroomId == id);
 
+                var studentsId = classroom.Students.Select(s => s.Id).ToList();
                 db.Entry(classroom).State = EntityState.Deleted;
 
                 await db.SaveChangesAsync();
+
+                // Delete all students in the classroom
+                if (studentsId.Count != 0)
+                {
+                    UserRepository user = new UserRepository();
+                    foreach (var student in studentsId)
+                    {
+                        await user.DeleteStudentAsync(student);
+                    }
+                }
             }
         }
 

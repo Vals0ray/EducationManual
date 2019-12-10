@@ -1,5 +1,4 @@
 ﻿@model EducationManual.Models.Classroom
-@using System.Linq;
 
 @using (Html.BeginForm())
 {
@@ -29,6 +28,6 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "List")
+    @Html.ActionLink("Back to List", "List", new { id = @EducationManual.Models.DataSave.SchoolId})
 </div>
 

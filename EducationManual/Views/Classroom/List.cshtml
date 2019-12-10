@@ -1,32 +1,36 @@
-﻿@model IEnumerable<EducationManual.Models.Classroom>
+﻿@model EducationManual.Models.School
 
 <div id="modDialog" class="modal fade">
     <div id="dialogContent" class="modal-dialog"></div>
 </div>
 
 <p>
-    <h4>Classrooms</h4>
+    <h3>Classrooms</h3>
 </p>
 
-<table class="table">
+<br/>
+
+<table class="table table-striped table-hover ">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.ClassroomId)
+            #
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            Name
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Students)
+            Students count
         </th>
         <th></th>
     </tr>
 
-    @foreach (var item in Model)
+    @{ int i = 0; }
+    @foreach (var item in Model.Classrooms)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ClassroomId)
+                @{ i++;}
+                @i
             </td>
             <td>
                 @Html.ActionLink(item.Name, "List", "Student", new { id = item.ClassroomId }, null)
@@ -51,7 +55,7 @@
 @if (!User.IsInRole("Teacher"))
 {
     <p>
-        @Html.ActionLink("Create New Classroom", "Create", new { schoolId = ViewBag.SchoolId })
+        @Html.ActionLink("Create new classroom", "Create", null, new { @class = "btn btn-default" })
     </p>
 }
 

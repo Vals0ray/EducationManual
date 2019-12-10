@@ -19,10 +19,12 @@ namespace EducationManual.Controllers
             HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
         private readonly IUserService _userService;
+        private readonly ISchoolService _schoolService;
 
-        public AccountController(IUserService userService)
+        public AccountController(IUserService userService, ISchoolService schoolService)
         {
             _userService = userService;
+            _schoolService = schoolService;
         }
 
         //[Authorize(Roles = "SuperAdmin, SchoolAdmin")]
@@ -58,13 +60,24 @@ namespace EducationManual.Controllers
                 };
 
                 result = await UserManager.CreateAsync(user, model.Password);
-                await UserManager.AddToRoleAsync(user.Id, role);
-
                 if (result.Succeeded)
                 {
+                    await UserManager.AddToRoleAsync(user.Id, role);
+
                     if (role == "SchoolAdmin")
                     {
-                        return RedirectToAction("Update", "School", new { id = schoolId, newSchoolAdminId = user.Id });
+                        School school = await _schoolService.GetSchoolAsync(schoolId);
+
+                        if(school.SchoolAdminId != null)
+                        {
+                            await UserManager.RemoveFromRoleAsync(school.SchoolAdminId, "SchoolAdmin");
+                            await UserManager.AddToRolesAsync(school.SchoolAdminId, "Teacher");
+                        }
+
+                        school.SchoolAdminId = user.Id;
+                        await _schoolService.UpdateSchoolAsync(school);
+
+                        return RedirectToAction("Update", "School", new { id = schoolId });
                     }
                     else if (role == "Teacher")
                     {
@@ -77,7 +90,7 @@ namespace EducationManual.Controllers
                             Student student = new Student()
                             {
                                 Id = user.Id,
-                                ClassroomId = classroomId
+                                ClassroomId = (int)classroomId
                             };
                             db.Students.Add(student);
                             db.SaveChanges();
@@ -149,6 +162,10 @@ namespace EducationManual.Controllers
                     {
                         return RedirectToAction("List", "School");
                     }
+                    else if (UserManager.IsInRole(user.Id, "Student"))
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                     else
                     {
                         if (string.IsNullOrEmpty(returnUrl))
@@ -163,6 +180,51 @@ namespace EducationManual.Controllers
             ViewBag.returnUrl = returnUrl;
             return View(model);
         }
+
+        //
+        // GET: /Manage/ChangePassword
+        public ActionResult ChangePassword(string id, string returnURl)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                ViewBag.UserId = id;
+                ViewBag.ReturnURL = returnURl;
+                return View();
+            }
+
+            return HttpNotFound();
+        }
+
+        //
+        // POST: /Manage/ChangePassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model, string id, string returnURl)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.UserId = id;
+                ViewBag.ReturnURL = returnURl;
+                return View(model);
+            }
+            var result = await UserManager.ChangePasswordAsync(id, model.OldPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                return Redirect(returnURl);
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error);
+                }
+            }
+
+            ViewBag.UserId = id;
+            ViewBag.ReturnURL = returnURl;
+            return View(model);
+        }
+
         public ActionResult Logout()
         {
             AuthenticationManager.SignOut();

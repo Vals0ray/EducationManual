@@ -25,9 +25,13 @@ namespace EducationManual.Controllers
         public async Task<ActionResult> List()
         {
             var schools = await _schoolService.GetSchoolsAsync();
-
-            DataSave.SchoolName = "";
-            return View(schools);
+            if(schools != null)
+            {
+                DataSave.SchoolName = "";
+                return View(schools);
+            }
+            
+            return HttpNotFound();
         }
 
         // Create new school
@@ -37,11 +41,13 @@ namespace EducationManual.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(School school)
+        public async Task<ActionResult> Create(SchoolViewModel schoolViewModel)
         {
-            if (school != null) 
+            if (schoolViewModel != null) 
             {
-                await _schoolService.AddSchoolAsync(school);
+                var newSchool = new School() { Name = schoolViewModel.Name };
+
+                await _schoolService.AddSchoolAsync(newSchool);
 
                 return RedirectToAction("List");
             }
@@ -50,33 +56,20 @@ namespace EducationManual.Controllers
         }
 
         // Update existing school
-        public async Task<ActionResult> Update(int? id, string newSchoolAdminId = null)
+        public async Task<ActionResult> Update(int? id)
         {
             if (id == null) return HttpNotFound();
 
             School school = await _schoolService.GetSchoolAsync((int)id);
-
-            SchoolViewModel schoolViewModel = new SchoolViewModel()
-            {
-                Id = school.SchoolId,
-                Name = school.Name,
-                SchoolAdmin =
-                school.SchoolAdminId == null ? 
-                null : await UserManager.FindByIdAsync(school.SchoolAdminId)
-            };
-
             if(school != null)
             {
-                if(newSchoolAdminId != null)
+                SchoolViewModel schoolViewModel = new SchoolViewModel()
                 {
-                    if(school.SchoolAdminId != null)
-                    {
-                        await UserManager.RemoveFromRoleAsync(schoolViewModel.SchoolAdmin.Id, "SchoolAdmin");
-                        await UserManager.AddToRolesAsync(schoolViewModel.SchoolAdmin.Id, "Teacher");
-                    }
-
-                    schoolViewModel.SchoolAdmin = await UserManager.FindByIdAsync(newSchoolAdminId);
-                }
+                    Id = school.SchoolId,
+                    Name = school.Name,
+                    SchoolAdmin = school.SchoolAdminId == null ?
+                        null : await UserManager.FindByIdAsync(school.SchoolAdminId)
+                };
 
                 return View(schoolViewModel);
             }
@@ -93,10 +86,6 @@ namespace EducationManual.Controllers
                 if (school != null)
                 {
                     school.Name = schoolViewModel.Name;
-                    if(schoolViewModel.SchoolAdmin != null)
-                    {
-                        school.SchoolAdminId = schoolViewModel.SchoolAdmin.Id;
-                    }
 
                     await _schoolService.UpdateSchoolAsync(school);
 
@@ -108,19 +97,24 @@ namespace EducationManual.Controllers
         }
 
         // Delete existing school
-        public ActionResult Delete(School school)
+        public ActionResult Delete(SchoolViewModel schoolViewModel)
         {
-            if(school != null) return View(school);
+            if(schoolViewModel != null) return View(schoolViewModel);
 
             return HttpNotFound();
         }
 
         [HttpPost]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int? id)
         {
-            await _schoolService.DeleteSchoolAsync(id);
-            
-            return RedirectToAction("List");
+            if (id != null)
+            {
+                await _schoolService.DeleteSchoolAsync((int)id);
+
+                return RedirectToAction("List");
+            }
+
+            return HttpNotFound();
         }
 
         // DeleteAdmin

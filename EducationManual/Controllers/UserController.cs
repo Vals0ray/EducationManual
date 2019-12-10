@@ -48,8 +48,11 @@ namespace EducationManual.Controllers
                 SchoolId = user.SchoolId,
                 isBlocked = isBlocked ? true : false
             };
+            List<string> roles;
 
-            List<string> roles = new List<string>() { "SuperAdmin", "SchoolAdmin", "Teacher", "Student"};
+            roles = userRole.First() == "Student" ?
+                new List<string>() { "Student" }  :
+                new List<string>() { "SuperAdmin", "SchoolAdmin", "Teacher" };
             
             SelectList items = new SelectList(roles, userRole.First());
             ViewBag.Items = items;
@@ -62,57 +65,76 @@ namespace EducationManual.Controllers
         {
             var user = await UserManager.FindByIdAsync(model.Id);
             var userRole = (await UserManager.GetRolesAsync(model.Id)).First();
-            var isBlocked = await UserManager.GetLockoutEnabledAsync(model.Id);
 
-            if (user != null)
+            if (ModelState.IsValid)
             {
-                user.FirstName = model.FirstName;
-                user.SecondName = model.SecondName;
-                user.Email = model.Email;
-                user.PhoneNumber = model.PhoneNumber;
-
-                // If user role has changed
-                if (model.Role != userRole)
+                if (user != null)
                 {
-                    await ChangeRole(user.Id, userRole, model.Role);
+                    user.FirstName = model.FirstName;
+                    user.SecondName = model.SecondName;
+                    user.UserName = model.Email;
+                    user.Email = model.Email;
+                    user.PhoneNumber = model.PhoneNumber;
 
-                    // If we set new school admin, set new school link to admin
-                    if(model.Role == "SchoolAdmin")
+                    // If user role has changed
+                    if (model.Role != userRole)
                     {
-                        var school = await _schoolService.GetSchoolAsync((int)model.SchoolId);
+                        await ChangeRole(user.Id, userRole, model.Role);
 
-                        // Change old school admin to teacher
-                        if(school.SchoolAdminId != null)
+                        // If we set new school admin, set new school link to admin
+                        if (model.Role == "SchoolAdmin")
                         {
-                            var oldSchoolAdmin = await UserManager.FindByIdAsync(school.SchoolAdminId);
-                            await ChangeRole(oldSchoolAdmin.Id, "SchoolAdmin", "Teacher");
-                            await UserManager.UpdateAsync(oldSchoolAdmin);
-                        }
+                            var school = await _schoolService.GetSchoolAsync((int)model.SchoolId);
 
-                        school.SchoolAdminId = user.Id;
-                        await _schoolService.UpdateSchoolAsync(school);
-                    }
-                    // If we change school admin role, delete in school link to admin
-                    else if (model.Role != "SchoolAdmin" && userRole == "SchoolAdmin")
-                    {
-                        var school = await _schoolService.GetSchoolAsync((int)model.SchoolId);
-                        if (school.SchoolAdminId != null)
-                        {
-                            school.SchoolAdminId = null;
+                            // Change old school admin to teacher
+                            if (school.SchoolAdminId != null)
+                            {
+                                var oldSchoolAdmin = await UserManager.FindByIdAsync(school.SchoolAdminId);
+                                await ChangeRole(oldSchoolAdmin.Id, "SchoolAdmin", "Teacher");
+                                await UserManager.UpdateAsync(oldSchoolAdmin);
+                            }
+
+                            school.SchoolAdminId = user.Id;
                             await _schoolService.UpdateSchoolAsync(school);
+                        }
+                        // If we change school admin role, delete in school link to admin
+                        else if (model.Role != "SchoolAdmin" && userRole == "SchoolAdmin")
+                        {
+                            var school = await _schoolService.GetSchoolAsync((int)model.SchoolId);
+                            if (school.SchoolAdminId != null)
+                            {
+                                school.SchoolAdminId = null;
+                                await _schoolService.UpdateSchoolAsync(school);
+                            }
+                        }
+                    }
+
+                    user.SchoolId = (int)model.SchoolId;
+                    await Block(user.Id, model.isBlocked);
+
+                    var result = await UserManager.UpdateAsync(user);
+                    if (result.Succeeded)
+                    {
+                        return Redirect(returnURL);
+                    }
+                    else
+                    {
+                        foreach (string error in result.Errors)
+                        {
+                            ModelState.AddModelError("", error);
                         }
                     }
                 }
-
-                user.SchoolId = model.SchoolId;
-                await Block(user.Id, model.isBlocked);
-
-                await UserManager.UpdateAsync(user);
-
-                return Redirect(returnURL);
             }
 
-            return HttpNotFound();
+            List<string> roles;
+            roles = userRole == "Student" ?
+                new List<string>() { "Student" } :
+                new List<string>() { "SuperAdmin", "SchoolAdmin", "Teacher" };
+
+            ViewBag.Items = new SelectList(roles);
+            ViewBag.ReturnURL = returnURL;
+            return View(model);
         }
 
         private async Task ChangeRole(string userId, string fromRole, string toRole)
@@ -149,11 +171,24 @@ namespace EducationManual.Controllers
             return View(roleUsers.ToList());
         }
 
-        public async Task<ActionResult> Delete(string userId, string userRole)
+        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
+        public ActionResult Delete(UserViewModel userViewModel)
         {
-            if (string.IsNullOrEmpty(userId)) return HttpNotFound();
+            if (userViewModel != null)
+            {
+                ViewBag.ReturnURL = userViewModel.returnURL;
+                return View(userViewModel);
+            }
+
+            return HttpNotFound();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Delete(string id, string userRole, string returnURL)
+        {
+            if (string.IsNullOrEmpty(id)) return HttpNotFound();
             
-            var user = await _userService.GetUserAsync(userId);
+            var user = await _userService.GetUserAsync(id);
 
             if(userRole == "SchoolAdmin")
             {
@@ -163,9 +198,17 @@ namespace EducationManual.Controllers
                 await _schoolService.UpdateSchoolAsync(school);
             }
 
-            await _userService.DeleteUserAsync(userId);
+            if(userRole == "Student")
+            {
+                await _userService.DeleteStudentAsync(id);
+            }
+            else
+            {
+                await _userService.DeleteUserAsync(id);
+            }
 
-            return RedirectToAction("List", new { usersRole = userRole });
+
+            return Redirect(returnURL);
         }
     }
 }

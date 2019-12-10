@@ -1,14 +1,18 @@
 ﻿@model IEnumerable<EducationManual.ViewModels.LessonViewModel>
 
 <p>
-    <h4>
-        Classroom: @ViewBag.ClassroomName
-        Choose tasks for students
-    </h4>
+    <h3>
+        Choose tasks for students in classroom: @ViewBag.ClassroomName
+    </h3>
 </p>
 
-<table class="table">
+<br/>
+
+<table class="table table-striped table-hover ">
     <tr>
+        <th>
+            #
+        </th>
         <th>
             Student
         </th>
@@ -17,8 +21,13 @@
         </th>
     </tr>
 
+@{ int i = 0;}
 @foreach (var item in Model) {
     <tr>
+        <td>
+            @{ i++;}
+            @i
+        </td>
         <td>
             @Html.DisplayFor(iteme => item.Student.ApplicationUser.FirstName)
 
@@ -40,5 +49,5 @@
 </table>
 
 <p>
-    @Html.ActionLink("Start Lesson", "StartLesson")
+    @Html.ActionLink("Start Lesson", "StartLesson", null, new { @class = "btn btn-default" })
 </p>

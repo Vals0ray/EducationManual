@@ -9,8 +9,14 @@ namespace EducationManual.Hubs
         public string GetUserId(IRequest connection)
         {
             var db = new ApplicationContext();
-            var userId = db.Users.FirstOrDefault(u => u.UserName == connection.User.Identity.Name).Id;
-            return userId.ToString();
+
+            if (connection.User.Identity.IsAuthenticated)
+            {
+                var userId = db.Users.FirstOrDefault(u => u.UserName == connection.User.Identity.Name).Id;
+                return userId.ToString();
+            }
+
+            return "IsAuthenticated == null";
         }
     }
 }

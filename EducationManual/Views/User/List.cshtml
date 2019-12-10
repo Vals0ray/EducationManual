@@ -1,6 +1,12 @@
 ﻿@model IEnumerable<EducationManual.Models.ApplicationUser>
 
-<table class="table">
+<p>
+    <h3>Users in role: @ViewBag.UsersRole</h3>
+</p>
+
+<br/>
+
+<table class="table table-striped table-hover ">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.FirstName)

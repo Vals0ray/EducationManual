@@ -1,40 +1,34 @@
 ﻿@using EducationManual.Models;
 @model IEnumerable<Student>
 
-<div id="modDialog" class="modal fade">
-    <div id="dialogContent" class="modal-dialog"></div>
-</div>
-
 <p>
-    <h4>Studens of class: @ViewBag.ClassroomName</h4>
+    <h3>Studens of class:  @ViewBag.ClassroomName</h3>
 </p>
+ 
+<br/>
 
-<table class="table">
+<table class="table table-striped table-hover ">
     <tr>
+        <th>#</th>
         <th>
             @Html.DisplayNameFor(model => model.ApplicationUser.FirstName)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.ApplicationUser.SecondName)
         </th>
-        <th></th>
     </tr>
 
+    @{ int i = 0;}
     @foreach (var item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ApplicationUser.FirstName)
+                @{ i++;}
+                @i
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ApplicationUser.SecondName)
-            </td>
-            <td>
-                @Html.ActionLink("Details", "Details", "User", new { userId = item.ApplicationUser.Id, returnURL = Request.Url }, null)
-                @if (!User.IsInRole("Teacher"))
-                {
-                    @Html.ActionLink("Delete", "Delete", item, new { @class = "delItem" })
-                }
+                <a href="/User/Details?userId=@item.ApplicationUser.Id&returnURL=@Request.Url">
+                    @Html.DisplayFor(modelItem => item.ApplicationUser.FirstName)
+                    @Html.DisplayFor(modelItem => item.ApplicationUser.SecondName)
+                </a>
             </td>
         </tr>
     }
@@ -44,24 +38,7 @@
 @if (!User.IsInRole("Teacher"))
 {
     <p>
-        @Html.ActionLink("Create new student", "Register", "Account", new { schoolId = DataSave.SchoolId, classroomId = ViewBag.ClassroomId, role = "Student" }, "")
+        @Html.ActionLink("Back to classroms list", "List", "Classroom", new { id = DataSave.SchoolId }, new { @class = "btn btn-default" })
+        @Html.ActionLink("Create new student", "Register", "Account", new { schoolId = DataSave.SchoolId, classroomId = ViewBag.ClassroomId, role = "Student" }, new { @class = "btn btn-default" })
     </p>
-}
-
-@section scripts
-{
-    <script type="text/javascript">
-
-        $(function () {
-            $.ajaxSetup({ cache: false });
-            $(".delItem").click(function (e) {
-
-                e.preventDefault();
-                $.get(this.href, function (data) {
-                    $('#dialogContent').html(data);
-                    $('#modDialog').modal('show');
-                });
-            });
-        })
-    </script>
 }

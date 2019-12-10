@@ -1,18 +1,21 @@
 ﻿@model IEnumerable<EducationManual.Models.School>
 @using System.Linq;
+@using EducationManual.ViewModels;
 
 <div id="modDialog" class="modal fade">
     <div id="dialogContent" class="modal-dialog"></div>
 </div>
 
 <p>
-    <h4>Schools</h4>
+    <h3>Schools</h3>
 </p>
 
-<table class="table">
+<br/>
+
+<table class="table table-striped table-hover ">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.SchoolId)
+            #
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Name)
@@ -29,11 +32,13 @@
         <th></th>
     </tr>
 
+    @{ int i = 0;}
     @foreach (var item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.SchoolId)
+                @{ i++;}
+                @i
             </td>
             <td>
                 @Html.ActionLink(item.Name, "List", "Classroom", new { id = item.SchoolId }, null)
@@ -59,14 +64,14 @@
             </td>
             <td>
                 @Html.ActionLink("Update", "Update", new { id = item.SchoolId }) |
-                @Html.ActionLink("Delete", "Delete", item, new { @class = "delItem" })
+                @Html.ActionLink("Delete", "Delete", new SchoolViewModel() { Id = item.SchoolId, Name = item.Name }, new { @class = "delItem" })
             </td>
         </tr>
     }
 </table>
 
 <p>
-    @Html.ActionLink("Create New School", "Create")
+    @Html.ActionLink("Create new school", "Create", null, new { @class = "btn btn-default" })
 </p>
 
 @section scripts

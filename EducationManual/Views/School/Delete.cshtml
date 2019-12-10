@@ -1,4 +1,4 @@
-﻿@model EducationManual.Models.School
+﻿@model EducationManual.ViewModels.SchoolViewModel
 
 @{
     Layout = null;
@@ -16,7 +16,7 @@
             <p>Realy delete school @Html.DisplayFor(model => model.Name) ?</p>
         </div>
         <div class="modal-footer">
-            <input type="hidden" value="@Model.SchoolId" name="Id" />
+            <input type="hidden" value="@Model.Id" name="Id" />
             <input type="submit" value="Delete" class="btn btn-primary" />
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>

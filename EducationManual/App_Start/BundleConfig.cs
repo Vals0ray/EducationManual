@@ -23,7 +23,7 @@ namespace EducationManual
                       "~/Scripts/bootstrap.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
+                      "~/Content/bootstrap-flatly3.css",
                       "~/Content/site.css"));
         }
     }

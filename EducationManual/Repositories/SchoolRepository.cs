@@ -49,6 +49,7 @@ namespace EducationManual.Repositories
             return result;
         }
 
+        // TODO: Delete related data
         public async Task DeleteSchoolAsync(int id)
         {
             using (var db = new ApplicationContext())
@@ -57,9 +58,35 @@ namespace EducationManual.Repositories
                                              .Include(s => s.Classrooms.Select(c => c.Students))
                                              .FirstOrDefaultAsync(s => s.SchoolId == id);
 
+                var classroomsId = school.Classrooms.Select(c => c.ClassroomId).ToList();
+                var usersId = school.ApplicationUsers.Select(u => u.Id).ToList();
+
                 db.Entry(school).State = EntityState.Deleted;
 
                 await db.SaveChangesAsync();
+
+                // Delete all classrooms with students in the School
+                if (classroomsId.Count != 0)
+                {
+                    foreach (var classroom in classroomsId)
+                    {
+                        ClassroomRepository classroomRepository = new ClassroomRepository();
+                        await classroomRepository.DeleteClassroomAsync(classroom);
+                    }
+                }
+
+                // Delete all users in the School
+                if (usersId.Count != 0)
+                {
+                    foreach (var user in usersId)
+                    {
+                        if (db.Users.Any(u => u.Id == user))
+                        {
+                            UserRepository userRepository = new UserRepository();
+                            await userRepository.DeleteUserAsync(user);
+                        }
+                    }
+                }
             }
         }
 
