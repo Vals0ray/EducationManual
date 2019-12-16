@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Web.Mvc;
-
 using Unity.AspNet.Mvc;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(EducationManual.UnityMvcActivator), nameof(EducationManual.UnityMvcActivator.Start))]

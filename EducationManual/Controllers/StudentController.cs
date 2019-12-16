@@ -1,5 +1,4 @@
-﻿using EducationManual.Models;
-using EducationManual.Services;
+﻿using EducationManual.Services;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
