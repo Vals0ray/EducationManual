@@ -8,6 +8,8 @@ namespace EducationManual.Repositories
     {
         Task<School> GetSchoolAsync(int id);
 
+        Task<School> GetSchoolByNameAsync(string name);
+
         Task<School> AddSchoolAsync(School school);
 
         Task<IEnumerable<School>> GetSchoolsAsync();

@@ -5,6 +5,7 @@ using Microsoft.AspNet.Identity.Owin;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Text;
 
 namespace EducationManual.Controllers
 {
@@ -30,7 +31,7 @@ namespace EducationManual.Controllers
                 var school = await _schoolService.GetSchoolAsync((int)currentUser.SchoolId);
 
                 DataSave.SchoolName = school.Name;
-                DataSave.SchoolId = school.SchoolId;
+                DataSave.SchoolId = school.SchoolId; 
             }
 
             return View();

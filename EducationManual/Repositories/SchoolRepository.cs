@@ -22,6 +22,20 @@ namespace EducationManual.Repositories
             return result;
         }
 
+        public async Task<School> GetSchoolByNameAsync(string name)
+        {
+            School result = null;
+
+            using (var db = new ApplicationContext())
+            {
+                result = await db.Schools.Include(s => s.ApplicationUsers)
+                                         .Include(s => s.Classrooms.Select(c => c.Students))
+                                         .FirstOrDefaultAsync(s => s.Name == name);
+            }
+
+            return result;
+        }
+
         public async Task<School> AddSchoolAsync(School school)
         {
             School result = null;

@@ -1,10 +1,13 @@
 ﻿using EducationManual.Models;
 using EducationManual.Services;
 using EducationManual.ViewModels;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -31,11 +34,13 @@ namespace EducationManual.Controllers
 
         public async Task<ActionResult> Details(string userId, string returnURL)
         {
-            if (string.IsNullOrEmpty(userId)) return HttpNotFound();
+            if (string.IsNullOrEmpty(userId)) 
+                return HttpNotFound();
 
             var user = await UserManager.FindByIdAsync(userId);
-            var userRole = await UserManager.GetRolesAsync(user.Id);
+            var userRole = (await UserManager.GetRolesAsync(user.Id)).First();
             var isBlocked = await UserManager.GetLockoutEnabledAsync(user.Id);
+            var userSchoolName = (await _schoolService.GetSchoolAsync((int)user.SchoolId)).Name;
 
             UserViewModel userView = new UserViewModel()
             {
@@ -44,24 +49,50 @@ namespace EducationManual.Controllers
                 SecondName = user.SecondName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
-                Role = userRole.First(),
-                SchoolId = user.SchoolId,
+                Role = userRole,
+                SchoolName = userSchoolName,
+                ProfilePicture = user.ProfilePicture,
                 isBlocked = isBlocked ? true : false
             };
-            List<string> roles;
 
-            roles = userRole.First() == "Student" ?
-                new List<string>() { "Student" }  :
-                new List<string>() { "SuperAdmin", "SchoolAdmin", "Teacher" };
-            
-            SelectList items = new SelectList(roles, userRole.First());
-            ViewBag.Items = items;
+            List<string> roles;
+            if (userRole == "Student")
+            {
+                roles = new List<string>() { "Student" };
+            }
+            else if (User.IsInRole("Teacher"))
+            {
+                roles = new List<string>() { "Teacher" };
+            }
+            else if (User.IsInRole("SchoolAdmin"))
+            {
+                roles = new List<string>() { "SchoolAdmin", "Teacher" };
+            }
+            else
+            {
+                roles = new List<string>() { "SuperAdmin", "SchoolAdmin", "Teacher" };
+            }
+
+            var schools = await _schoolService.GetSchoolsAsync();
+            IEnumerable<string> schoolNames;
+
+            if (User.IsInRole("SuperAdmin"))
+            {
+                schoolNames = schools.Select(s => s.Name);
+            }
+            else
+            {
+                schoolNames = new List<string>() { userView.SchoolName };
+            }
+
+            ViewBag.Roles = new SelectList(roles, userView.Role);
+            ViewBag.SchoolNames = new SelectList(schoolNames, userView.SchoolName);
             ViewBag.ReturnURL = returnURL;
             return View(userView);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Details(UserViewModel model, string returnURL)
+        public async Task<ActionResult> Details(UserViewModel model, string returnURL, string returnImg)
         {
             var user = await UserManager.FindByIdAsync(model.Id);
             var userRole = (await UserManager.GetRolesAsync(model.Id)).First();
@@ -70,11 +101,17 @@ namespace EducationManual.Controllers
             {
                 if (user != null)
                 {
+                    var school = await _schoolService.GetSchoolByNameAsync(model.SchoolName);
                     user.FirstName = model.FirstName;
                     user.SecondName = model.SecondName;
                     user.UserName = model.Email;
                     user.Email = model.Email;
                     user.PhoneNumber = model.PhoneNumber;
+                    user.SchoolId = school.SchoolId;
+                    if(returnImg != "null")
+                    {
+                        user.ProfilePicture = Encoding.ASCII.GetBytes(returnImg);
+                    }
 
                     // If user role has changed
                     if (model.Role != userRole)
@@ -84,8 +121,6 @@ namespace EducationManual.Controllers
                         // If we set new school admin, set new school link to admin
                         if (model.Role == "SchoolAdmin")
                         {
-                            var school = await _schoolService.GetSchoolAsync((int)model.SchoolId);
-
                             // Change old school admin to teacher
                             if (school.SchoolAdminId != null)
                             {
@@ -100,7 +135,6 @@ namespace EducationManual.Controllers
                         // If we change school admin role, delete in school link to admin
                         else if (model.Role != "SchoolAdmin" && userRole == "SchoolAdmin")
                         {
-                            var school = await _schoolService.GetSchoolAsync((int)model.SchoolId);
                             if (school.SchoolAdminId != null)
                             {
                                 school.SchoolAdminId = null;
@@ -109,7 +143,6 @@ namespace EducationManual.Controllers
                         }
                     }
 
-                    user.SchoolId = (int)model.SchoolId;
                     await Block(user.Id, model.isBlocked);
 
                     var result = await UserManager.UpdateAsync(user);
@@ -128,11 +161,27 @@ namespace EducationManual.Controllers
             }
 
             List<string> roles;
-            roles = userRole == "Student" ?
-                new List<string>() { "Student" } :
-                new List<string>() { "SuperAdmin", "SchoolAdmin", "Teacher" };
+            if (userRole == "Student")
+            {
+                roles = new List<string>() { "Student" };
+            }
+            else if (User.IsInRole("Teacher"))
+            {
+                roles = new List<string>() { "Teacher" };
+            }
+            else if (User.IsInRole("SchoolAdmin"))
+            {
+                roles = new List<string>() { "SchoolAdmin", "Teacher" };
+            }
+            else
+            {
+                roles = new List<string>() { "SuperAdmin", "SchoolAdmin", "Teacher" };
+            }
 
-            ViewBag.Items = new SelectList(roles);
+            var schools = await _schoolService.GetSchoolsAsync();
+            var schoolNames = schools.Select(s => s.Name);
+            ViewBag.Roles = new SelectList(roles, model.Role);
+            ViewBag.SchoolNames = new SelectList(schoolNames, model.SchoolName);
             ViewBag.ReturnURL = returnURL;
             return View(model);
         }
@@ -157,7 +206,8 @@ namespace EducationManual.Controllers
 
         public ActionResult List(string usersRole)
         {
-            if(string.IsNullOrEmpty(usersRole)) return HttpNotFound();
+            if(string.IsNullOrEmpty(usersRole)) 
+                return HttpNotFound();
 
             // Look up the role
             var role = RoleManager.Roles.Single(r => r.Name == usersRole);
@@ -171,13 +221,25 @@ namespace EducationManual.Controllers
             return View(roleUsers.ToList());
         }
 
-        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
-        public ActionResult Delete(UserViewModel userViewModel)
+        public async Task<ActionResult> Delete(string id, string userRole, string returnUrl, string adssa)
         {
-            if (userViewModel != null)
+            if (id != null)
             {
-                ViewBag.ReturnURL = userViewModel.returnURL;
-                return View(userViewModel);
+                var user = await UserManager.FindByIdAsync(id);
+
+                UserViewModel userView = new UserViewModel()
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    SecondName = user.SecondName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    Role = userRole,
+                    ProfilePicture = user.ProfilePicture
+                };
+
+                ViewBag.ReturnURL = returnUrl;
+                return View(userView);
             }
 
             return HttpNotFound();
@@ -186,7 +248,8 @@ namespace EducationManual.Controllers
         [HttpPost]
         public async Task<ActionResult> Delete(string id, string userRole, string returnURL)
         {
-            if (string.IsNullOrEmpty(id)) return HttpNotFound();
+            if (string.IsNullOrEmpty(id)) 
+                return HttpNotFound();
             
             var user = await _userService.GetUserAsync(id);
 

@@ -1,166 +1,212 @@
 ﻿@model EducationManual.ViewModels.UserViewModel
 @using Microsoft.AspNet.Identity
+@using EducationManual.Models
+@using System.Text
 
 <div id="modDialog" class="modal fade">
     <div id="dialogContent" class="modal-dialog"></div>
 </div>
 
+<style>
+    #wrapper {
+        display: flex;
+        flex-direction: row;
+    }
+
+    #left {
+        flex: 3;
+    }
+
+    #right {
+        flex: 1;
+    }
+</style>
+
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-
-<div class="form-horizontal">
-    <h4>User information</h4>
+    <h3>User information</h3>
     <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.Id)
-    <input type="hidden" name="returnURL" value="@ViewBag.ReturnURL" />
-    @if ((!User.IsInRole("Teacher") || Model.Id == User.Identity.GetUserId()) && !User.IsInRole("Student"))
-    {
-        <div class="form-group">
-            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        <div id="wrapper">
+            <div id="right"></div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.SecondName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SecondName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SecondName, "", new { @class = "text-danger" })
-            </div>
-        </div>
+            <div id="left" class="form-horizontal">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.Id)
+                <input type="hidden" name="returnURL" value="@ViewBag.ReturnURL" />
+                <input type="hidden" id="returnImg" name="returnImg" value="null" />
+                @if ((!User.IsInRole("Teacher") || Model.Id == User.Identity.GetUserId()) && !User.IsInRole("Student"))
+                {
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SecondName, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.SecondName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.SecondName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @*@Html.EditorFor(model => model.Role, new { htmlAttributes = new { @class = "form-control" } })*@
-                @Html.DropDownList("Role", ViewBag.Items as SelectList, new { @class="form-control" })
-                @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.SchoolId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.SchoolId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SchoolId, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @*@Html.EditorFor(model => model.Role, new { htmlAttributes = new { @class = "form-control" } })*@
+                            @Html.DropDownListFor(model => model.Role, ViewBag.Roles as SelectList, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.isBlocked, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    <label>
-                        @Html.EditorFor(model => model.isBlocked, new { @class = "checkbox" })
-                        @Html.ValidationMessageFor(model => model.isBlocked, "", new { @class = "text-danger" })
-                    </label>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SchoolName, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(model => model.SchoolName, ViewBag.SchoolNames as SelectList, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.SchoolName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.isBlocked, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.EditorFor(model => model.isBlocked, new { @class = "checkbox" })
+                                    @Html.ValidationMessageFor(model => model.isBlocked, "", new { @class = "text-danger" })
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DisplayFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SecondName, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DisplayFor(model => model.SecondName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.SecondName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DisplayFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DisplayFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DisplayFor(model => model.Role, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SchoolName, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DisplayFor(model => model.SchoolName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.SchoolName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.isBlocked, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.DisplayFor(model => model.isBlocked)
+                                @Html.ValidationMessageFor(model => model.isBlocked, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div id="right" class="form-horizontal">
+                @Html.Label("User photo")
+                <br />
+
+                @if (Model.ProfilePicture == null)
+                {
+                    <img id="results" src="@DataSave.DefaultPicture" alt="Your null avatar" height="180" width="180" />
+                }
+                else
+                {
+                    <img id="results" src="@Encoding.ASCII.GetString(Model.ProfilePicture)" alt="Your avatar" height="180" width="180" />
+                }
+
+                @if (Model.Id == User.Identity.GetUserId() || User.IsInRole("SchoolAdmin") || User.IsInRole("SuperAdmin"))
+                {
+                <div class="form-group">
+                    <br />
+                    <label for="InputFile">Change photo</label>
+                    <input type="file" size="100" class="form-control-file" id="InputFile" aria-describedby="fileHelp">
+                    <small id="fileHelp" class="form-text text-muted">This is some placeholder block-level.</small>
                 </div>
+                }
             </div>
+
+            <div id="right"></div>
         </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
-    }
-    else
-    {
-        <div class="form-group">
-            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DisplayFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        <div style="text-align: center;">
+            <a href="@ViewBag.ReturnURL" class="btn btn-default">Back</a>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.SecondName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DisplayFor(model => model.SecondName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SecondName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DisplayFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DisplayFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DisplayFor(model => model.Role, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.SchoolId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DisplayFor(model => model.SchoolId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.SchoolId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.isBlocked, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.DisplayFor(model => model.isBlocked)
-                    @Html.ValidationMessageFor(model => model.isBlocked, "", new { @class = "text-danger" })
+            @if (!User.IsInRole("Teacher") && !User.IsInRole("Student"))
+            {
+                <input type="submit" value="Save changes" class="btn btn-default" />
+                Model.returnURL = ViewBag.ReturnURL;
+                @Html.ActionLink("Change password", "ChangePassword", "Account", new { id = Model.Id, returnURl = Request.Url }, new { @class = "btn btn-default" })
+                <div class="btn btn-default">
+                    @Html.ActionLink("Delete", "Delete", new { id = Model.Id, userRole = Model.Role, returnUrl = ViewBag.ReturnURL },
+                                                         new { @class = "delItem", @style = "text-decoration:none;color:white;" })
                 </div>
-            </div>
+            }
+            else if (Model.Id == User.Identity.GetUserId() && !User.IsInRole("Student"))
+            {
+                <input type="submit" value="Save changes" class="btn btn-default" />
+                Model.returnURL = ViewBag.ReturnURL;
+                @Html.ActionLink("Change password", "ChangePassword", "Account", new { id = Model.Id, returnURl = Request.Url }, new { @class = "btn btn-default" })
+            }
         </div>
-    }
-
-    <p>
-        <a href="@ViewBag.ReturnURL" class="btn btn-default">Back to list</a>
-
-        @if (!User.IsInRole("Teacher") && !User.IsInRole("Student"))
-        {
-            Model.returnURL = ViewBag.ReturnURL;
-            @Html.ActionLink("Delete", "Delete", Model, new { @id = "delItem", @class = "btn btn-default" })
-            <a></a>
-            @Html.ActionLink("Change password", "ChangePassword", "Account", new { id = Model.Id, returnURl = Request.Url }, new { @class = "btn btn-default" })
-        }
-        else if (Model.Id == User.Identity.GetUserId() && !User.IsInRole("Student"))
-        {
-            @Html.ActionLink("Change password", "ChangePassword", "Account", new { id = Model.Id, returnURl = Request.Url }, new { @class = "btn btn-default" })
-        }
-    </p>
-</div>
 }
 
 @section scripts
@@ -169,7 +215,7 @@
 
         $(function () {
             $.ajaxSetup({ cache: false });
-           $("#delItem").click(function (e) {
+            $(".delItem").click(function (e) {
 
                 e.preventDefault();
                 $.get(this.href, function (data) {
@@ -178,5 +224,22 @@
                 });
             });
         })
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#results').attr('src', e.target.result);
+                    $('#returnImg').attr('value', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#InputFile").change(function () {
+            readURL(this);
+        });
     </script>
 }

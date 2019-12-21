@@ -12,6 +12,8 @@ namespace EducationManual.Models
 
         public string SecondName { get; set; }
 
+        public byte[] ProfilePicture { get; set; }
+
         public Student Student { get; set; }
 
         public ApplicationUser()

@@ -12,15 +12,18 @@ namespace EducationManual.ViewModels
         [Required]
         public string SecondName { get; set; }
 
+        public byte[] ProfilePicture { get; set; }
+
         [Required]
         public string Email { get; set; }
 
         public string PhoneNumber { get; set; }
 
+        [Required]
         public string Role { get; set; }
 
         [Required]
-        public int? SchoolId { get; set; }
+        public string SchoolName { get; set; }
 
         public bool isBlocked { get; set; }
 

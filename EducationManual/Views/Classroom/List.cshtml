@@ -5,13 +5,13 @@
 </div>
 
 <p>
-    <h3>Classrooms</h3>
+    <h2>Classrooms list</h2>
 </p>
 
 <br/>
 
 <table class="table table-striped table-hover ">
-    <tr>
+    <tr class="success">
         <th>
             #
         </th>
@@ -21,30 +21,31 @@
         <th>
             Students count
         </th>
-        <th></th>
+        <th>Actions</th>
     </tr>
 
-    @{ int i = 0; }
+    @{ int i = 1; }
     @foreach (var item in Model.Classrooms)
     {
-        <tr>
-            <td>
-                @{ i++;}
+        <tr class="active" style="font-size:large;vertical-align:central;">
+            <td onclick="Redirect(@item.ClassroomId)">
                 @i
+                @{ i++;}
             </td>
-            <td>
-                @Html.ActionLink(item.Name, "List", "Student", new { id = item.ClassroomId }, null)
+            <td onclick="Redirect(@item.ClassroomId)">
+                @Html.DisplayFor(modelItem => item.Name)
             </td>
-            <td>
+            <td onclick="Redirect(@item.ClassroomId)">
                 @Html.DisplayFor(modelItem => item.Students.Count)
             </td>
             <td>
                 
                 @if (!User.IsInRole("Teacher"))
                 {
-                    @Html.ActionLink("Update", "Update", new { id = item.ClassroomId })
-                    <label>|</label>
-                    @Html.ActionLink("Delete", "Delete", item, new { @class = "delItem" })
+                    @Html.ActionLink("Update", "Update", new { id = item.ClassroomId }, new { @class = "btn btn-primary btn-xs" })
+                    <div class="btn btn-primary btn-xs">
+                        @Html.ActionLink("Delete", "Delete", item, new { @class = "delItem", @style = "text-decoration:none;color:white;" })
+                    </div>
                 }
             </td>
         </tr>
@@ -74,5 +75,9 @@
                 });
             });
         })
+
+        function Redirect(id) {
+            location.href = "/Student/List/" + id;
+        }
     </script>
 }

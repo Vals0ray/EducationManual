@@ -83,16 +83,15 @@ namespace EducationManual.Controllers
                     }
                     else if (role == "Student")
                     {
-                        using (ApplicationContext db = new ApplicationContext())
+                        
+                        Student student = new Student()
                         {
-                            Student student = new Student()
-                            {
-                                Id = user.Id,
-                                ClassroomId = (int)classroomId
-                            };
-                            db.Students.Add(student);
-                            db.SaveChanges();
-                        }
+                            Id = user.Id,
+                            ClassroomId = (int)classroomId
+                        };
+
+                        await _userService.AddStudentAsync(student);
+
                         return RedirectToAction("List", "Student", new { id = classroomId });
                     }
                 }
@@ -105,6 +104,7 @@ namespace EducationManual.Controllers
                 }
             }
 
+            ViewBag.ClassroomId = classroomId;
             ViewBag.SchoolId = schoolId;
             ViewBag.Role = role;
             return View(model);

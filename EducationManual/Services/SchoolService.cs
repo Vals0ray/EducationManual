@@ -29,6 +29,11 @@ namespace EducationManual.Services
             return await _schoolRepository.GetSchoolAsync(id);
         }
 
+        public async Task<School> GetSchoolByNameAsync(string name)
+        {
+            return await _schoolRepository.GetSchoolByNameAsync(name);
+        }
+
         public async Task<IEnumerable<School>> GetSchoolsAsync()
         {
             return await _schoolRepository.GetSchoolsAsync();

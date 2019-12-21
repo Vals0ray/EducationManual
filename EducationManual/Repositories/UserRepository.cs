@@ -28,11 +28,14 @@ namespace EducationManual.Repositories
                 var student = await db.Students.Include(s => s.ApplicationUser)
                                                .FirstOrDefaultAsync(u => u.Id == id);
 
-                db.Entry(student).State = EntityState.Deleted;
+                if(student != null)
+                {
+                    db.Entry(student).State = EntityState.Deleted;
 
-                await db.SaveChangesAsync();
+                    await db.SaveChangesAsync();
 
-                await DeleteUserAsync(id);
+                    await DeleteUserAsync(id);
+                }
             }
         }
 

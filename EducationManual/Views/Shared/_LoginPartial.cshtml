@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNet.Identity
 @using EducationManual.Models
+@using System.Text
+
 @if (Request.IsAuthenticated)
 {
     <ul class="nav navbar-nav">
@@ -62,7 +64,7 @@
 
         <ul class="nav navbar-nav navbar-right">
             <li>
-                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Details", "User", routeValues: new { userId = User.Identity.GetUserId(), returnURL = Request.Url }, htmlAttributes: new { title = "Manage" })
+                @Html.ActionLink(User.Identity.GetUserName(), "Details", "User", routeValues: new { userId = User.Identity.GetUserId(), returnURL = Request.Url }, htmlAttributes: new { title = "Manage" })
             </li>
             <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
         </ul>
