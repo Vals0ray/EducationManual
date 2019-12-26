@@ -88,18 +88,48 @@
     using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
         @Html.AntiForgeryToken()
-
         <ul class="nav navbar-nav navbar-right">
-            <li>
-                @Html.ActionLink(User.Identity.GetUserName(), "Details", "User", routeValues: new { userId = User.Identity.GetUserId(), returnURL = Request.Url }, htmlAttributes: new { title = "Manage" })
+            <li class="dropdown">
+                <a href="/User/Details?userId=@User.Identity.GetUserId()&returnURL=@Request.Url" title="Manage" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                    <img class="img-circle" width="20" height="20" src="@DataSave.Photo" style="margin-right:13px">
+                    @User.Identity.GetUserName()
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li>
+                        @Html.ActionLink("Setting", "Details", "User", routeValues: new { userId = User.Identity.GetUserId(), returnURL = Request.Url }, htmlAttributes: new { title = "Account settings" })
+                    </li>
+
+                    <li class="divider"></li>
+                    <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                </ul>
             </li>
-            <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
         </ul>
     }
 }
 else
 {
-    <ul class="nav navbar-nav navbar-right">  
+    <ul class="nav navbar-nav navbar-right">
         <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
     </ul>
 }
+
+@*<style>
+    #avatar {
+    /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
+    background-image: url('http://i.stack.imgur.com/Dj7eP.jpg');
+    
+    /* make a square container */
+    width: 20px;
+    height: 20px;
+
+    /* fill the container, preserving aspect ratio, and cropping to fit */
+    background-size: cover;
+
+    /* center the image vertically and horizontally */
+    background-position: top center;
+
+    /* round the edges to a circle with border radius 1/2 container size */
+    border-radius: 50%;
+}
+</style>*@
