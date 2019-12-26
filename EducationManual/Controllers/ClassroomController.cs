@@ -1,18 +1,15 @@
-﻿using EducationManual.Models;
+﻿using EducationManual.Logs;
+using EducationManual.Models;
 using EducationManual.Services;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace EducationManual.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "SuperAdmin, SchoolAdmin, Teacher")]
     public class ClassroomController : Controller
     {
-        private ApplicationUserManager UserManager => 
-            HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+        private string UserIP => HttpContext.Request.UserHostAddress;
 
         private readonly IClassroomService _classroomService;
         private readonly ISchoolService _schoolService;
@@ -26,20 +23,19 @@ namespace EducationManual.Controllers
         // Out put list of Classrooms
         public async Task<ActionResult> List(int? id)
         {
-            if (id == null)
+            if (id != null)
             {
-                string userId = User.Identity.GetUserId();
-                var currentUser = await UserManager.FindByIdAsync(userId);
-                if (User.IsInRole("SuperAdmin")) 
-                    id = DataSave.SchoolId;
-                else id = currentUser.SchoolId;
+                var school = await _schoolService.GetSchoolAsync((int)id);
+                if (school != null)
+                {
+                    DataSave.SchoolName = school.Name;
+                    DataSave.SchoolId = school.SchoolId;
+
+                    return View(school);
+                }
             }
 
-            var school = await _schoolService.GetSchoolAsync((int)id);
-            DataSave.SchoolName = school.Name;
-            DataSave.SchoolId = school.SchoolId;
-
-            return View(school);
+            return HttpNotFound();
         }
 
         // Create new Classroom
@@ -56,7 +52,12 @@ namespace EducationManual.Controllers
             if (classroom != null)
             {
                 classroom.SchoolId = DataSave.SchoolId;
+
                 await _classroomService.AddClassroomAsync(classroom);
+
+                string message = $"[{UserIP}] [{User.Identity.Name}] created classroom: " +
+                                 $"{classroom.Name} in {DataSave.SchoolName}";
+                Logger.Log.Info(message);
 
                 return RedirectToAction("List", new { id = classroom.SchoolId });
             }
@@ -80,18 +81,21 @@ namespace EducationManual.Controllers
 
         [HttpPost]
         [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
-        public async Task<ActionResult> Update(Classroom classroom)
+        public async Task<ActionResult> Update(Classroom newClassroom)
         {
-            if (classroom != null)
+            if (newClassroom != null)
             {
-                var result = await _classroomService.GetClassroomAsync(classroom.ClassroomId);
-                if (result != null)
+                var oldClassroom = await _classroomService.GetClassroomAsync(newClassroom.ClassroomId);
+                if (oldClassroom != null)
                 {
-                    result.Name = classroom.Name;
+                    string message = $"[{UserIP}] [{User.Identity.Name}] changed classroom: " +
+                                     $"{oldClassroom.Name} -> {newClassroom.Name} in {DataSave.SchoolName}";
+                    Logger.Log.Info(message);
 
-                    await _classroomService.UpdateClassroomAsync(result);
+                    oldClassroom.Name = newClassroom.Name;
+                    await _classroomService.UpdateClassroomAsync(oldClassroom);
 
-                    return RedirectToAction("List", new { id = result.SchoolId });
+                    return RedirectToAction("List", new { id = oldClassroom.SchoolId });
                 }
             }
 
@@ -115,10 +119,16 @@ namespace EducationManual.Controllers
             if (id != null)
             {
                 var classroom = await _classroomService.GetClassroomAsync((int)id);
+                if(classroom != null)
+                {
+                    await _classroomService.DeleteClassroomAsync((int)id);
 
-                await _classroomService.DeleteClassroomAsync((int)id);
+                    string message = $"[{UserIP}] [{User.Identity.Name}] deleted classroom: " +
+                                     $"{classroom.Name} in {DataSave.SchoolName}";
+                    Logger.Log.Info(message);
 
-                return RedirectToAction("List", new { id = classroom.SchoolId });
+                    return RedirectToAction("List", new { id = classroom.SchoolId });
+                }
             }
 
             return HttpNotFound();

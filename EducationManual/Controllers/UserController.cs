@@ -1,4 +1,5 @@
-﻿using EducationManual.Models;
+﻿using EducationManual.Logs;
+using EducationManual.Models;
 using EducationManual.Services;
 using EducationManual.ViewModels;
 using Microsoft.AspNet.Identity;
@@ -22,6 +23,8 @@ namespace EducationManual.Controllers
 
         private ApplicationRoleManager RoleManager =>
             HttpContext.GetOwinContext().GetUserManager<ApplicationRoleManager>();
+
+        private string UserIP => HttpContext.Request.UserHostAddress;
 
         private readonly IUserService _userService;
         private readonly ISchoolService _schoolService;
@@ -101,7 +104,9 @@ namespace EducationManual.Controllers
             {
                 if (user != null)
                 {
+                    var messages = CreateLog(user, model);
                     var school = await _schoolService.GetSchoolByNameAsync(model.SchoolName);
+
                     user.FirstName = model.FirstName;
                     user.SecondName = model.SecondName;
                     user.UserName = model.Email;
@@ -148,6 +153,11 @@ namespace EducationManual.Controllers
                     var result = await UserManager.UpdateAsync(user);
                     if (result.Succeeded)
                     {
+                        foreach(var massege in messages)
+                        {
+                            Logger.Log.Info(massege);
+                        }
+
                         return Redirect(returnURL);
                     }
                     else
@@ -186,6 +196,40 @@ namespace EducationManual.Controllers
             return View(model);
         }
 
+        private List<string> CreateLog(ApplicationUser oldUser, UserViewModel newUser)
+        {
+            string pattern = $"[{UserIP}] [{User.Identity.Name}]";
+            List<string> messages = new List<string>();
+
+            if(oldUser.FirstName != newUser.FirstName)
+            {
+                messages.Add($"{pattern} changed [{oldUser.Email}] First name: {oldUser.FirstName} -> {newUser.FirstName}");
+            }
+
+            if (oldUser.SecondName != newUser.SecondName)
+            {
+                messages.Add($"{pattern} changed [{oldUser.Email}] Second name: {oldUser.SecondName} -> {newUser.SecondName}");
+            }
+
+            if (oldUser.Email != newUser.Email)
+            {
+                messages.Add($"{pattern} changed [{oldUser.Email}] E-mail: {oldUser.Email} -> {newUser.Email}");
+            }
+
+            if(oldUser.PhoneNumber != newUser.PhoneNumber)
+            {
+                messages.Add($"{pattern} changed [{oldUser.Email}] Phone number: {oldUser.PhoneNumber} -> {newUser.PhoneNumber}");
+            }
+
+            //if (oldUser.School.Name != newUser.SchoolName)
+            //{
+            //    message = $"{pattern} changed user school {oldUser.Email}: {oldUser.School.Name} -> {newUser.SchoolName}";
+            //    Logger.Log.Info(message);
+            //}
+
+            return messages;
+        }
+
         private async Task ChangeRole(string userId, string fromRole, string toRole)
         {
             await UserManager.RemoveFromRoleAsync(userId, fromRole);
@@ -216,6 +260,11 @@ namespace EducationManual.Controllers
             var roleUsers = UserManager.Users
                 .Where(u => u.Roles.Any(r => r.RoleId == role.Id))
                 .Include(u => u.School);
+
+            if(DataSave.SchoolName != "")
+            {
+                roleUsers = roleUsers.Where(u => u.SchoolId == DataSave.SchoolId);
+            }
 
             ViewBag.UsersRole = usersRole;
             return View(roleUsers.ToList());
@@ -270,6 +319,9 @@ namespace EducationManual.Controllers
                 await _userService.DeleteUserAsync(id);
             }
 
+            string pattern = $"[{UserIP}] [{User.Identity.Name}]";
+            string message = $"{pattern} deleted [{user.Email}]";
+            Logger.Log.Info(message);
 
             return Redirect(returnURL);
         }

@@ -12,17 +12,22 @@
             </li>
             if (DataSave.SchoolName == "")
             {
-                <li>
-                    @Html.ActionLink("SuperAdmins", "List", "User", new { usersRole = "SuperAdmin" }, null)
-                </li>
-                <li>
-                    @Html.ActionLink("SchoolAdmins", "List", "User", new { usersRole = "SchoolAdmin" }, null)
-                </li>
-                <li>
-                    @Html.ActionLink("Teachers", "List", "User", new { usersRole = "Teacher" }, null)
-                </li>
-                <li>
-                    @Html.ActionLink("Students", "List", "User", new { usersRole = "Student" }, null)
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Users <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            @Html.ActionLink("SuperAdmins", "List", "User", new { usersRole = "SuperAdmin" }, null)
+                        </li>
+                        <li>
+                            @Html.ActionLink("SchoolAdmins", "List", "User", new { usersRole = "SchoolAdmin" }, null)
+                        </li>
+                        <li>
+                            @Html.ActionLink("Teachers", "List", "User", new { usersRole = "Teacher" }, null)
+                        </li>
+                        <li>
+                            @Html.ActionLink("Students", "List", "User", new { usersRole = "Student" }, null)
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     <a>@DataSave.SchoolName</a>
@@ -34,10 +39,21 @@
                     <a>@DataSave.SchoolName</a>
                 </li>
                 <li>
-                    @Html.ActionLink("Classrooms", "List", "Classroom")
+                    @Html.ActionLink("Classrooms", "List", "Classroom", new { id = DataSave.SchoolId }, null)
                 </li>
-                <li>
-                    @Html.ActionLink("Teachers", "List", "Teacher")
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Users <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            @Html.ActionLink("SchoolAdmins", "List", "User", new { usersRole = "SchoolAdmin" }, null)
+                        </li>
+                        <li>
+                            @Html.ActionLink("Teachers", "List", "User", new { usersRole = "Teacher" }, null)
+                        </li>
+                        <li>
+                            @Html.ActionLink("Students", "List", "User", new { usersRole = "Student" }, null)
+                        </li>
+                    </ul>
                 </li>
             }
         }
@@ -47,10 +63,21 @@
                 <a>@DataSave.SchoolName</a>
             </li>
             <li>
-                @Html.ActionLink("Classrooms", "List", "Classroom")
+                @Html.ActionLink("Classrooms", "List", "Classroom", new { id = DataSave.SchoolId }, null)
             </li>
-            <li>
-                @Html.ActionLink("Teachers", "List", "Teacher")
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Users <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li>
+                        @Html.ActionLink("SchoolAdmins", "List", "User", new { usersRole = "SchoolAdmin" }, null)
+                    </li>
+                    <li>
+                        @Html.ActionLink("Teachers", "List", "User", new { usersRole = "Teacher" }, null)
+                    </li>
+                    <li>
+                        @Html.ActionLink("Students", "List", "User", new { usersRole = "Student" }, null)
+                    </li>
+                </ul>
             </li>
             <li>
                 @Html.ActionLink("Create lesson", "ChooseClassroom", "Lesson")

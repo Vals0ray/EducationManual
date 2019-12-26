@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using EducationManual.Logs;
 using EducationManual.Models;
 using EducationManual.Services;
 using EducationManual.ViewModels;
@@ -15,6 +16,11 @@ namespace EducationManual.Controllers
     {
         private ApplicationUserManager UserManager => 
             HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+
+        private IAuthenticationManager AuthenticationManager =>
+            HttpContext.GetOwinContext().Authentication;
+
+        private string UserIP => HttpContext.Request.UserHostAddress;
 
         private readonly IUserService _userService;
         private readonly ISchoolService _schoolService;
@@ -62,6 +68,9 @@ namespace EducationManual.Controllers
                 {
                     await UserManager.AddToRoleAsync(user.Id, role);
 
+                    string message = $"[{UserIP}] [{User.Identity.Name}] registered new {role}: {user.UserName} in {DataSave.SchoolName}";
+                    Logger.Log.Info(message);
+
                     if (role == "SchoolAdmin")
                     {
                         School school = await _schoolService.GetSchoolAsync(schoolId);
@@ -79,7 +88,7 @@ namespace EducationManual.Controllers
                     }
                     else if (role == "Teacher")
                     {
-                        return RedirectToAction("List", "Teacher", new { id = schoolId, newSchoolAdminId = user.Id });
+                        return RedirectToAction("List", "User", new { usersRole = "Teacher" });
                     }
                     else if (role == "Student")
                     {
@@ -110,14 +119,10 @@ namespace EducationManual.Controllers
             return View(model);
         }
 
-        private IAuthenticationManager AuthenticationManager => 
-            HttpContext.GetOwinContext().Authentication;
-
-        public ActionResult Login(string returnUrl)
+        public ActionResult Login()
         {
             if (!User.Identity.IsAuthenticated)
             {
-                ViewBag.returnUrl = returnUrl;
                 return View();
             }
 
@@ -126,7 +131,7 @@ namespace EducationManual.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginModel model, string returnUrl)
+        public async Task<ActionResult> Login(LoginModel model)
         {
             if (ModelState.IsValid)
             {
@@ -156,6 +161,9 @@ namespace EducationManual.Controllers
                         IsPersistent = true
                     }, claim);
 
+                    string message = $"[{UserIP}] [{user.UserName}] conected!";
+                    Logger.Log.Info(message); // Add sign in log
+
                     if (UserManager.IsInRole(user.Id, "SuperAdmin"))
                     {
                         return RedirectToAction("List", "School");
@@ -166,16 +174,10 @@ namespace EducationManual.Controllers
                     }
                     else
                     {
-                        if (string.IsNullOrEmpty(returnUrl))
-                        {
-                            return RedirectToAction("List", "Classroom", new { id = user.SchoolId });
-                        }
-                    }
-                    
-                    return Redirect(returnUrl);
+                        return RedirectToAction("List", "Classroom", new { id = user.SchoolId });
+                    }    
                 }
             }
-            ViewBag.returnUrl = returnUrl;
             return View(model);
         }
 
@@ -226,6 +228,8 @@ namespace EducationManual.Controllers
         public ActionResult Logout()
         {
             AuthenticationManager.SignOut();
+            string message = $"[{UserIP}] [{User.Identity.Name}] disconected!";
+            Logger.Log.Info(message);
             return RedirectToAction("Login");
         }
     }

@@ -54,6 +54,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.0-preview2-19525-03\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
@@ -191,13 +194,13 @@
     <Compile Include="Controllers\Lesson\TaskController.cs" />
     <Compile Include="Controllers\SchoolController.cs" />
     <Compile Include="Controllers\StudentController.cs" />
-    <Compile Include="Controllers\TeacherController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hubs\CustomUserIdProvider.cs" />
     <Compile Include="Hubs\NotificationHub.cs" />
+    <Compile Include="Logs\Logger.cs" />
     <Compile Include="Migrations\201912211301450_FinalMigration.cs" />
     <Compile Include="Migrations\201912211301450_FinalMigration.designer.cs">
       <DependentUpon>201912211301450_FinalMigration.cs</DependentUpon>
@@ -257,6 +260,8 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Logs\Example.log" />
+    <Content Include="Logs\Example.log.2019-12-25" />
     <None Include="Properties\PublishProfiles\EducationManual - Web Deploy.pubxml" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -378,11 +383,9 @@
     <Content Include="Views\Classroom\Create.cshtml" />
     <Content Include="Views\Classroom\Delete.cshtml" />
     <Content Include="Views\Classroom\Update.cshtml" />
-    <Content Include="Views\Teacher\List.cshtml" />
     <Content Include="Views\User\Delete.cshtml" />
     <Content Include="Views\Student\List.cshtml" />
     <Content Include="Views\User\Details.cshtml" />
-    <Content Include="Views\School\DeleteAdmin.cshtml" />
     <Content Include="Views\User\List.cshtml" />
     <Content Include="Views\Lesson\ChooseClassroom.cshtml" />
     <Content Include="Views\Lesson\ChooseStudent.cshtml" />

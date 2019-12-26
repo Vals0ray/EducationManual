@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web;
 using Microsoft.AspNet.Identity.Owin;
+using EducationManual.Logs;
 
 namespace EducationManual.Controllers
 {
@@ -13,6 +14,8 @@ namespace EducationManual.Controllers
     {
         private ApplicationUserManager UserManager => 
             HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+
+        private string UserIP => HttpContext.Request.UserHostAddress;
 
         private readonly ISchoolService _schoolService;
 
@@ -49,6 +52,9 @@ namespace EducationManual.Controllers
 
                 await _schoolService.AddSchoolAsync(newSchool);
 
+                string message = $"[{UserIP}] [{User.Identity.Name}] created school: {newSchool.Name}";
+                Logger.Log.Info(message);
+
                 return RedirectToAction("List");
             }
 
@@ -58,36 +64,40 @@ namespace EducationManual.Controllers
         // Update existing school
         public async Task<ActionResult> Update(int? id)
         {
-            if (id == null) return HttpNotFound();
-
-            School school = await _schoolService.GetSchoolAsync((int)id);
-            if(school != null)
+            if (id != null)
             {
-                SchoolViewModel schoolViewModel = new SchoolViewModel()
+                School school = await _schoolService.GetSchoolAsync((int)id);
+                if (school != null)
                 {
-                    Id = school.SchoolId,
-                    Name = school.Name,
-                    SchoolAdmin = school.SchoolAdminId == null ?
-                        null : await UserManager.FindByIdAsync(school.SchoolAdminId)
-                };
+                    SchoolViewModel schoolViewModel = new SchoolViewModel()
+                    {
+                        Id = school.SchoolId,
+                        Name = school.Name,
+                        SchoolAdmin = school.SchoolAdminId == null ?
+                            null : await UserManager.FindByIdAsync(school.SchoolAdminId)
+                    };
 
-                return View(schoolViewModel);
+                    return View(schoolViewModel);
+                }
             }
 
             return HttpNotFound();
         }
 
         [HttpPost]
-        public async Task<ActionResult> Update(SchoolViewModel schoolViewModel)
+        public async Task<ActionResult> Update(SchoolViewModel newSchool)
         {
-            if (schoolViewModel != null)
+            if (newSchool != null)
             {
-                var school = await _schoolService.GetSchoolAsync(schoolViewModel.Id);
-                if (school != null)
+                var oldSchool = await _schoolService.GetSchoolAsync(newSchool.Id);
+                if (oldSchool != null)
                 {
-                    school.Name = schoolViewModel.Name;
+                    string message = $"[{UserIP}] [{User.Identity.Name}] changed school: " +
+                                     $"{oldSchool.Name} -> {newSchool.Name}";
+                    Logger.Log.Info(message);
 
-                    await _schoolService.UpdateSchoolAsync(school);
+                    oldSchool.Name = newSchool.Name;
+                    await _schoolService.UpdateSchoolAsync(oldSchool);
 
                     return RedirectToAction("List");
                 }
@@ -105,41 +115,19 @@ namespace EducationManual.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Delete(int? id)
+        public async Task<ActionResult> Delete(int? id, string schoolName)
         {
-            if (id != null)
+            if (id != null && !string.IsNullOrEmpty(schoolName))
             {
                 await _schoolService.DeleteSchoolAsync((int)id);
+
+                string message = $"[{UserIP}] [{User.Identity.Name}] deleted school: {schoolName}";
+                Logger.Log.Info(message);
 
                 return RedirectToAction("List");
             }
 
             return HttpNotFound();
-        }
-
-        // DeleteAdmin
-        public async Task<ActionResult> DeleteAdmin(string userId)
-        {
-            var user = await UserManager.FindByIdAsync(userId);
-
-            if (user != null) return View(user);
-
-            return HttpNotFound();
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> DeleteAdmin(ApplicationUser modelUser)
-        {
-            var user = await UserManager.FindByIdAsync(modelUser.Id);
-            var school = await _schoolService.GetSchoolAsync((int)user.SchoolId);
-
-            school.SchoolAdminId = null;
-            await _schoolService.UpdateSchoolAsync(school);
-
-            await UserManager.RemoveFromRoleAsync(user.Id, "SchoolAdmin");
-            await UserManager.AddToRolesAsync(user.Id, "Teacher");
-
-            return RedirectToAction("Update", new { id = user.SchoolId });
         }
     }
 }

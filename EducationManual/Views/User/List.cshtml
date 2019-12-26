@@ -28,10 +28,13 @@
         <th>
             @Html.DisplayNameFor(model => model.PhoneNumber)
         </th>
-        <th>
-            School Name
-        </th>
-        <th>Actions</th>
+        @if (User.IsInRole("SuperAdmin"))
+        {
+            <th>
+                School Name
+            </th>
+            <th>Actions</th>
+        }
     </tr>
 
     @{ int i = 1;}
@@ -54,19 +57,29 @@
             <td onclick="location.href = '/User/Details?userId=@item.Id&returnURL=@Request.Url'">
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
-            <td onclick="location.href = '/User/Details?userId=@item.Id&returnURL=@Request.Url'">
-                @Html.DisplayFor(modelItem => item.School.Name)
-            </td>
-            <td>
-                <div class="btn btn-primary btn-xs">
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id, userRole = ViewBag.UsersRole, returnUrl = Request.Url },
-                                                         new { @class = "delItem", @style = "text-decoration:none;color:white;" })
-                </div>
-            </td>
+            @if (User.IsInRole("SuperAdmin"))
+            {
+                <td onclick="location.href = '/User/Details?userId=@item.Id&returnURL=@Request.Url'">
+                    @Html.DisplayFor(modelItem => item.School.Name)
+                </td>
+                <td>
+                    <div class="btn btn-primary btn-xs">
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id, userRole = ViewBag.UsersRole, returnUrl = Request.Url },
+                                                                      new { @class = "delItem", @style = "text-decoration:none;color:white;" })
+                    </div>
+                </td>
+            }
         </tr>
     }
 
 </table>
+
+@if ((User.IsInRole("SuperAdmin") || User.IsInRole("SchoolAdmin")) && DataSave.SchoolName != "" && ViewBag.UsersRole == "Teacher")
+{
+    <p>
+        @Html.ActionLink("Create new teacher", "Register", "Account", new { schoolId = DataSave.SchoolId, role = "Teacher" }, new { @class = "btn btn-default" })
+    </p>
+}
 
 @section scripts
 {
