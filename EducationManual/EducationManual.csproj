@@ -261,7 +261,6 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Logs\Example.log" />
-    <Content Include="Logs\Example.log.2019-12-25" />
     <None Include="Properties\PublishProfiles\EducationManual - Web Deploy.pubxml" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

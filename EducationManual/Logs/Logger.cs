@@ -8,5 +8,7 @@ namespace EducationManual.Logs
         public static ILog Log { get; } = LogManager.GetLogger("LOGGER");
 
         public static void InitLogger() => XmlConfigurator.Configure();
+
+        public static void UserUpdateLog(string content) => Log.Info(content);
     }
 }

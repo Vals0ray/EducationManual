@@ -1,4 +1,4 @@
-﻿@model IEnumerable<EducationManual.Models.ApplicationUser>
+﻿@model IEnumerable<EducationManual.ViewModels.UserViewModel>
 @using EducationManual.Models
 
 <div id="modDialog" class="modal fade">
@@ -60,7 +60,7 @@
             @if (User.IsInRole("SuperAdmin"))
             {
                 <td onclick="location.href = '/User/Details?userId=@item.Id&returnURL=@Request.Url'">
-                    @Html.DisplayFor(modelItem => item.School.Name)
+                    @Html.DisplayFor(modelItem => item.SchoolName)
                 </td>
                 <td>
                     <div class="btn btn-primary btn-xs">

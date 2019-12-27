@@ -44,6 +44,11 @@ namespace EducationManual.Services
             return await _userRepository.GetUserAsync(id);
         }
 
+        public async Task<IEnumerable<ApplicationUser>> GetUserByRoleAsync(string usersRole)
+        {
+            return await _userRepository.GetUserByRoleAsync(usersRole);
+        }
+
         public async Task<Student> UpdateStudentAsync(Student student)
         {
             return await _userRepository.UpdateStudentAsync(student);

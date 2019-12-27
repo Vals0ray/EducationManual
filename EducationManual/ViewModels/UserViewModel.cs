@@ -12,7 +12,7 @@ namespace EducationManual.ViewModels
         [Required]
         public string SecondName { get; set; }
 
-        public byte[] ProfilePicture { get; set; }
+        public string ProfilePicture { get; set; }
 
         [Required]
         public string Email { get; set; }

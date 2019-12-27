@@ -12,6 +12,8 @@ namespace EducationManual.Services
 
         Task DeleteUserAsync(string id);
 
+        Task<IEnumerable<ApplicationUser>> GetUserByRoleAsync(string usersRole);
+
         Task<ApplicationUser> UpdateUserAsync(ApplicationUser user);
 
         // 

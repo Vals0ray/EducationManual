@@ -2,11 +2,8 @@
 using EducationManual.Models;
 using EducationManual.Services;
 using EducationManual.ViewModels;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,9 +18,6 @@ namespace EducationManual.Controllers
         private ApplicationUserManager UserManager =>
             HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
-        private ApplicationRoleManager RoleManager =>
-            HttpContext.GetOwinContext().GetUserManager<ApplicationRoleManager>();
-
         private string UserIP => HttpContext.Request.UserHostAddress;
 
         private readonly IUserService _userService;
@@ -35,96 +29,101 @@ namespace EducationManual.Controllers
             _schoolService = schoolService;
         }
 
+        // Display list of users in specific role
+        [HttpGet]
+        public async Task<ActionResult> List(string usersRole)
+        {
+            if (!string.IsNullOrEmpty(usersRole))
+            {
+                var usersInRole = await _userService.GetUserByRoleAsync(usersRole);
+                if (usersInRole != null)
+                {
+                    if (DataSave.SchoolName != "")
+                    {
+                        usersInRole = usersInRole.Where(u => u.SchoolId == DataSave.SchoolId);
+                    }
+
+                    var usersViewModel = new List<UserViewModel>();
+                    foreach (var userInRole in usersInRole)
+                    {
+                        var userViewModel = new UserViewModel()
+                        {
+                            Id = userInRole.Id,
+                            FirstName = userInRole.FirstName,
+                            SecondName = userInRole.SecondName,
+                            Email = userInRole.Email,
+                            PhoneNumber = userInRole.PhoneNumber,
+                            SchoolName = userInRole.School.Name,
+                        };
+
+                        usersViewModel.Add(userViewModel);
+                    }
+
+                    ViewBag.UsersRole = usersRole;
+                    return View(usersViewModel);
+                }
+            }
+               
+            return HttpNotFound();
+        }
+
+        // Get details information about selected user
+        [HttpGet]
         public async Task<ActionResult> Details(string userId, string returnURL)
         {
             if (string.IsNullOrEmpty(userId)) 
                 return HttpNotFound();
 
-            var user = await UserManager.FindByIdAsync(userId);
-            var userRole = (await UserManager.GetRolesAsync(user.Id)).First();
-            var isBlocked = await UserManager.GetLockoutEnabledAsync(user.Id);
-            var userSchoolName = (await _schoolService.GetSchoolAsync((int)user.SchoolId)).Name;
+            var user = await _userService.GetUserAsync(userId);
+            if (user != null) 
+            {
+                var userRoles = await UserManager.GetRolesAsync(user.Id);
 
-            UserViewModel userView = new UserViewModel()
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                SecondName = user.SecondName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                Role = userRole,
-                SchoolName = userSchoolName,
-                ProfilePicture = user.ProfilePicture,
-                isBlocked = isBlocked ? true : false
-            };
+                UserViewModel userView = new UserViewModel()
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    SecondName = user.SecondName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    Role = userRoles.First(),
+                    SchoolName = user.School.Name,
+                    ProfilePicture = user.ProfilePicture is null ? null : Encoding.ASCII.GetString(user.ProfilePicture),
+                    isBlocked = user.LockoutEnabled,
+                    returnURL = returnURL
+                };
 
-            List<string> roles;
-            if (userRole == "Student")
-            {
-                roles = new List<string>() { "Student" };
-            }
-            else if (User.IsInRole("Teacher"))
-            {
-                roles = new List<string>() { "Teacher" };
-            }
-            else if (User.IsInRole("SchoolAdmin"))
-            {
-                roles = new List<string>() { "SchoolAdmin", "Teacher" };
-            }
-            else
-            {
-                roles = new List<string>() { "SuperAdmin", "SchoolAdmin", "Teacher" };
+                await CreateSchoolsAndRolesViews(userView);
+
+                return View(userView);
             }
 
-            var schools = await _schoolService.GetSchoolsAsync();
-            IEnumerable<string> schoolNames;
-
-            if (User.IsInRole("SuperAdmin"))
-            {
-                schoolNames = schools.Select(s => s.Name);
-            }
-            else
-            {
-                schoolNames = new List<string>() { userView.SchoolName };
-            }
-
-            ViewBag.Roles = new SelectList(roles, userView.Role);
-            ViewBag.SchoolNames = new SelectList(schoolNames, userView.SchoolName);
-            ViewBag.ReturnURL = returnURL;
-            return View(userView);
+            return HttpNotFound();
         }
 
+        // Cheack and save changes in selected user 
         [HttpPost]
-        public async Task<ActionResult> Details(UserViewModel model, string returnURL, string returnImg)
+        public async Task<ActionResult> Details(UserViewModel newUser)
         {
-            var user = await UserManager.FindByIdAsync(model.Id);
-            var userRole = (await UserManager.GetRolesAsync(model.Id)).First();
+            var oldUser = await UserManager.FindByIdAsync(newUser.Id);
+            var userRole = (await UserManager.GetRolesAsync(newUser.Id)).First();
 
             if (ModelState.IsValid)
             {
-                if (user != null)
+                if (oldUser != null)
                 {
-                    var messages = CreateLog(user, model);
-                    var school = await _schoolService.GetSchoolByNameAsync(model.SchoolName);
+                    UpdateUserAndCreateLog(oldUser, newUser);
+                    var school = await _schoolService.GetSchoolByNameAsync(newUser.SchoolName);
 
-                    user.FirstName = model.FirstName;
-                    user.SecondName = model.SecondName;
-                    user.UserName = model.Email;
-                    user.Email = model.Email;
-                    user.PhoneNumber = model.PhoneNumber;
-                    user.SchoolId = school.SchoolId;
-                    if(returnImg != "null")
-                    {
-                        user.ProfilePicture = Encoding.ASCII.GetBytes(returnImg);
-                    }
+                    oldUser.SchoolId = school.SchoolId;
 
                     // If user role has changed
-                    if (model.Role != userRole)
+                    if (newUser.Role != userRole)
                     {
-                        await ChangeRole(user.Id, userRole, model.Role);
+                        await ChangeRole(oldUser.Id, userRole, newUser.Role);
 
                         // If we set new school admin, set new school link to admin
-                        if (model.Role == "SchoolAdmin")
+                        if (newUser.Role == "SchoolAdmin")
                         {
                             // Change old school admin to teacher
                             if (school.SchoolAdminId != null)
@@ -134,11 +133,11 @@ namespace EducationManual.Controllers
                                 await UserManager.UpdateAsync(oldSchoolAdmin);
                             }
 
-                            school.SchoolAdminId = user.Id;
+                            school.SchoolAdminId = oldUser.Id;
                             await _schoolService.UpdateSchoolAsync(school);
                         }
                         // If we change school admin role, delete in school link to admin
-                        else if (model.Role != "SchoolAdmin" && userRole == "SchoolAdmin")
+                        else if (newUser.Role != "SchoolAdmin" && userRole == "SchoolAdmin")
                         {
                             if (school.SchoolAdminId != null)
                             {
@@ -148,17 +147,12 @@ namespace EducationManual.Controllers
                         }
                     }
 
-                    await Block(user.Id, model.isBlocked);
+                    await Block(oldUser.Id, newUser.isBlocked);
 
-                    var result = await UserManager.UpdateAsync(user);
+                    var result = await UserManager.UpdateAsync(oldUser);
                     if (result.Succeeded)
                     {
-                        foreach(var massege in messages)
-                        {
-                            Logger.Log.Info(massege);
-                        }
-
-                        return Redirect(returnURL);
+                        return Redirect(newUser.returnURL);
                     }
                     else
                     {
@@ -170,64 +164,91 @@ namespace EducationManual.Controllers
                 }
             }
 
-            List<string> roles;
-            if (userRole == "Student")
+            await CreateSchoolsAndRolesViews(newUser);
+            
+            return View(newUser);
+        }
+
+        private async Task CreateSchoolsAndRolesViews(UserViewModel userView)
+        {
+            var schools = await _schoolService.GetSchoolsAsync();
+            var schoolsNames = new List<string> { userView.SchoolName };
+            var roles = new List<string>();
+
+            if (userView.Role.Contains("Student"))
             {
-                roles = new List<string>() { "Student" };
+                roles.Add("Student");
             }
             else if (User.IsInRole("Teacher"))
             {
-                roles = new List<string>() { "Teacher" };
+                roles.Add("Teacher");
             }
             else if (User.IsInRole("SchoolAdmin"))
             {
-                roles = new List<string>() { "SchoolAdmin", "Teacher" };
+                roles.Add("SchoolAdmin");
+                roles.Add("Teacher");
             }
-            else
+            else if (User.IsInRole("SuperAdmin"))
             {
-                roles = new List<string>() { "SuperAdmin", "SchoolAdmin", "Teacher" };
+                schoolsNames = schools.Select(s => s.Name).ToList();
+                roles.Add("SuperAdmin");
+                roles.Add("SchoolAdmin");
+                roles.Add("Teacher");
             }
 
-            var schools = await _schoolService.GetSchoolsAsync();
-            var schoolNames = schools.Select(s => s.Name);
-            ViewBag.Roles = new SelectList(roles, model.Role);
-            ViewBag.SchoolNames = new SelectList(schoolNames, model.SchoolName);
-            ViewBag.ReturnURL = returnURL;
-            return View(model);
+            ViewBag.Roles = new SelectList(roles, userView.Role);
+            ViewBag.SchoolNames = new SelectList(schoolsNames, userView.SchoolName);
         }
 
-        private List<string> CreateLog(ApplicationUser oldUser, UserViewModel newUser)
+        private void UpdateUserAndCreateLog(ApplicationUser oldUser, UserViewModel newUser)
         {
-            string pattern = $"[{UserIP}] [{User.Identity.Name}]";
-            List<string> messages = new List<string>();
+            string pattern = $"[{UserIP}] [{User.Identity.Name}] changed [{oldUser.Email}]";
+            string message;
 
-            if(oldUser.FirstName != newUser.FirstName)
+            if (oldUser.FirstName != newUser.FirstName)
             {
-                messages.Add($"{pattern} changed [{oldUser.Email}] First name: {oldUser.FirstName} -> {newUser.FirstName}");
+                message = $"{pattern} ftname: {oldUser.FirstName} -> {newUser.FirstName}";
+                Logger.UserUpdateLog(message);
+                oldUser.FirstName = newUser.FirstName;
             }
 
             if (oldUser.SecondName != newUser.SecondName)
             {
-                messages.Add($"{pattern} changed [{oldUser.Email}] Second name: {oldUser.SecondName} -> {newUser.SecondName}");
+                message = $"{pattern} sdname: {oldUser.SecondName} -> {newUser.SecondName}";
+                Logger.UserUpdateLog(message);
+                oldUser.SecondName = newUser.SecondName;
             }
 
             if (oldUser.Email != newUser.Email)
             {
-                messages.Add($"{pattern} changed [{oldUser.Email}] E-mail: {oldUser.Email} -> {newUser.Email}");
+                message = $"{pattern} e-mail: {oldUser.Email} -> {newUser.Email}";
+                Logger.UserUpdateLog(message);
+                oldUser.Email = oldUser.UserName = newUser.Email;
             }
 
             if(oldUser.PhoneNumber != newUser.PhoneNumber)
             {
-                messages.Add($"{pattern} changed [{oldUser.Email}] Phone number: {oldUser.PhoneNumber} -> {newUser.PhoneNumber}");
+                message = $"{pattern} number: {oldUser.PhoneNumber} -> {newUser.PhoneNumber}";
+                Logger.UserUpdateLog(message);
+                oldUser.PhoneNumber = newUser.PhoneNumber;
+            }
+
+            if (newUser.ProfilePicture != null)
+            {
+                var newUserPicture = Encoding.ASCII.GetBytes(newUser.ProfilePicture);
+                if (oldUser.ProfilePicture != newUserPicture)
+                {
+                    message = $"{pattern} photo!";
+                    Logger.UserUpdateLog(message);
+                    oldUser.ProfilePicture = newUserPicture;
+                }
             }
 
             //if (oldUser.School.Name != newUser.SchoolName)
             //{
-            //    message = $"{pattern} changed user school {oldUser.Email}: {oldUser.School.Name} -> {newUser.SchoolName}";
-            //    Logger.Log.Info(message);
+            //    message = $"{pattern} school: {oldUser.School.Name} -> {newUser.SchoolName}";
+            //    Logger.UserUpdateLog(message);
             //}
-
-            return messages;
         }
 
         private async Task ChangeRole(string userId, string fromRole, string toRole)
@@ -248,28 +269,7 @@ namespace EducationManual.Controllers
             }
         }
 
-        public ActionResult List(string usersRole)
-        {
-            if(string.IsNullOrEmpty(usersRole)) 
-                return HttpNotFound();
-
-            // Look up the role
-            var role = RoleManager.Roles.Single(r => r.Name == usersRole);
-
-            // Find the users in that role
-            var roleUsers = UserManager.Users
-                .Where(u => u.Roles.Any(r => r.RoleId == role.Id))
-                .Include(u => u.School);
-
-            if(DataSave.SchoolName != "")
-            {
-                roleUsers = roleUsers.Where(u => u.SchoolId == DataSave.SchoolId);
-            }
-
-            ViewBag.UsersRole = usersRole;
-            return View(roleUsers.ToList());
-        }
-
+        [HttpGet]
         public async Task<ActionResult> Delete(string id, string userRole, string returnUrl, string adssa)
         {
             if (id != null)
@@ -284,7 +284,7 @@ namespace EducationManual.Controllers
                     Email = user.Email,
                     PhoneNumber = user.PhoneNumber,
                     Role = userRole,
-                    ProfilePicture = user.ProfilePicture
+                    ProfilePicture = Encoding.ASCII.GetString(user.ProfilePicture)
                 };
 
                 ViewBag.ReturnURL = returnUrl;

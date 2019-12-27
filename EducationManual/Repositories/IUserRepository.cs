@@ -8,7 +8,7 @@ namespace EducationManual.Repositories
     {
         Task<ApplicationUser> GetUserAsync(string id);
 
-        //Task<ApplicationUser> GetUserByRoleAsync(int id);
+        Task<IEnumerable<ApplicationUser>> GetUserByRoleAsync(string usersRole);
 
         Task DeleteUserAsync(string id);
 

@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using EducationManual.Models;
 using System.Data.Entity;
+using System.Web;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace EducationManual.Repositories
 {
@@ -87,6 +89,25 @@ namespace EducationManual.Repositories
             {
                 result = await db.Users.Include(u => u.School)
                                        .FirstOrDefaultAsync(u => u.Id == id);
+            }
+
+            return result;
+        }
+
+        public async Task<IEnumerable<ApplicationUser>> GetUserByRoleAsync(string usersRole)
+        {
+            var result = new List<ApplicationUser>();
+            var RoleManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationRoleManager>();
+
+            using (var db = new ApplicationContext())
+            {
+                // Look up the role
+                var role = RoleManager.Roles.Single(r => r.Name == usersRole);
+
+                // Find the users in that role
+                result = await db.Users.Where(u => u.Roles.Any(r => r.RoleId == role.Id))
+                                       .Include(u => u.School)
+                                       .ToListAsync();
             }
 
             return result;
