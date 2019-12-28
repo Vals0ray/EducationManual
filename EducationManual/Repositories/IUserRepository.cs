@@ -1,4 +1,5 @@
 ﻿using EducationManual.Models;
+using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,11 +9,13 @@ namespace EducationManual.Repositories
     {
         Task<ApplicationUser> GetUserAsync(string id);
 
+        Task<ApplicationUser> GetUserWithoutTrackingAsync(string id);
+
         Task<IEnumerable<ApplicationUser>> GetUserByRoleAsync(string usersRole);
 
         Task DeleteUserAsync(string id);
 
-        Task<ApplicationUser> UpdateUserAsync(ApplicationUser user);
+        Task<IdentityResult> UpdateUserAsync(ApplicationUser user);
 
         // 
 

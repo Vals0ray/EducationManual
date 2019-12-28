@@ -31,7 +31,7 @@ namespace EducationManual.Controllers
             _schoolService = schoolService;
         }
 
-        //[Authorize(Roles = "SuperAdmin, SchoolAdmin")]
+        [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
         public ActionResult Register(int schoolId, int? classroomId = null, string role = null)
         {
             if (role != null)
@@ -163,6 +163,7 @@ namespace EducationManual.Controllers
 
                     string message = $"[{UserIP}] [{user.UserName}] conected!";
                     Logger.Log.Info(message); // Add sign in log
+                    DataSave.Photo = null;
 
                     if (UserManager.IsInRole(user.Id, "SuperAdmin"))
                     {

@@ -1,5 +1,6 @@
 ﻿using EducationManual.Models;
 using EducationManual.Repositories;
+using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -44,6 +45,11 @@ namespace EducationManual.Services
             return await _userRepository.GetUserAsync(id);
         }
 
+        public async Task<ApplicationUser> GetUserWithoutTrackingAsync(string id)
+        {
+            return await _userRepository.GetUserWithoutTrackingAsync(id);
+        }
+
         public async Task<IEnumerable<ApplicationUser>> GetUserByRoleAsync(string usersRole)
         {
             return await _userRepository.GetUserByRoleAsync(usersRole);
@@ -54,7 +60,7 @@ namespace EducationManual.Services
             return await _userRepository.UpdateStudentAsync(student);
         }
 
-        public async Task<ApplicationUser> UpdateUserAsync(ApplicationUser user)
+        public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
         {
             return await _userRepository.UpdateUserAsync(user);
         }

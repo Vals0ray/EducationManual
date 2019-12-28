@@ -20,9 +20,10 @@
             </p>
         </div>
         <div class="modal-footer">
-            <input type="hidden" name="returnURL" value="@ViewBag.ReturnURL" />
             <input type="hidden" value="@Model.Id" name="Id" />
-            <input type="hidden" value="@Model.Role" name="userRole" />
+            <input type="hidden" value="@Model.Role" name="Role" />
+            <input type="hidden" value="@Model.SchoolId" name="SchoolId" />
+            <input type="hidden" value="@Model.Email" name="Email" />
             <input type="submit" value="Delete" class="btn btn-primary" />
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>

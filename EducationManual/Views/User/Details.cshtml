@@ -33,6 +33,7 @@
             <div id="left" class="form-horizontal">
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 @Html.HiddenFor(model => model.Id)
+                @Html.HiddenFor(model => model.SchoolId)
                 <input type="hidden" name="returnURL" value="@Model.returnURL" />
                 <input type="hidden" id="returnImg" name="ProfilePicture" value="@Model.ProfilePicture" />
                 @if ((!User.IsInRole("Teacher") || Model.Id == User.Identity.GetUserId()) && !User.IsInRole("Student"))

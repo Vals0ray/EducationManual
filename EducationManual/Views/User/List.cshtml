@@ -64,7 +64,7 @@
                 </td>
                 <td>
                     <div class="btn btn-primary btn-xs">
-                        @Html.ActionLink("Delete", "Delete", new { id = item.Id, userRole = ViewBag.UsersRole, returnUrl = Request.Url },
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id, userRole = ViewBag.UsersRole },
                                                                       new { @class = "delItem", @style = "text-decoration:none;color:white;" })
                     </div>
                 </td>
@@ -78,6 +78,14 @@
 {
     <p>
         @Html.ActionLink("Create new teacher", "Register", "Account", new { schoolId = DataSave.SchoolId, role = "Teacher" }, new { @class = "btn btn-default" })
+    </p>
+}
+
+@if ((User.IsInRole("SuperAdmin") || User.IsInRole("SchoolAdmin")) && DataSave.SchoolName != "" && ViewBag.UsersRole == "Student")
+{
+    <p>
+        @Html.ActionLink("Back to classroms list", "List", "Classroom", new { id = DataSave.SchoolId }, new { @class = "btn btn-default" })
+        @Html.ActionLink("Create new student", "Register", "Account", new { schoolId = DataSave.SchoolId, classroomId = ViewBag.ClassroomId, role = "Student" }, new { @class = "btn btn-default" })
     </p>
 }
 

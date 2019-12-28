@@ -23,6 +23,9 @@ namespace EducationManual.ViewModels
         public string Role { get; set; }
 
         [Required]
+        public int SchoolId { get; set; }
+
+        [Required]
         public string SchoolName { get; set; }
 
         public bool isBlocked { get; set; }

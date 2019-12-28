@@ -5,6 +5,8 @@ using EducationManual.Models;
 using System.Data.Entity;
 using System.Web;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace EducationManual.Repositories
 {
@@ -94,6 +96,20 @@ namespace EducationManual.Repositories
             return result;
         }
 
+        public async Task<ApplicationUser> GetUserWithoutTrackingAsync(string id)
+        {
+            ApplicationUser result = null;
+
+            using (var db = new ApplicationContext())
+            {
+                result = await db.Users.AsNoTracking()
+                                       .Include(u => u.School)
+                                       .FirstOrDefaultAsync(u => u.Id == id);
+            }
+
+            return result;
+        }
+
         public async Task<IEnumerable<ApplicationUser>> GetUserByRoleAsync(string usersRole)
         {
             var result = new List<ApplicationUser>();
@@ -125,16 +141,33 @@ namespace EducationManual.Repositories
             return student;
         }
 
-        public async Task<ApplicationUser> UpdateUserAsync(ApplicationUser user)
+        public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
         {
+            IdentityResult user1 = null;
+
+            var upUser = new ApplicationUser()
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                SecondName = user.SecondName,
+                Email = user.Email,
+                UserName = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                SchoolId = user.SchoolId,
+                ProfilePicture = user.ProfilePicture,
+                LockoutEnabled = user.LockoutEnabled,
+                PasswordHash = user.PasswordHash,
+                SecurityStamp = user.SecurityStamp
+            };
+
             using (var db = new ApplicationContext())
             {
-                db.Entry(user).State = EntityState.Modified;
-
-                await db.SaveChangesAsync();
+                var _userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+                db.Users.Attach(upUser);
+                user1 = await _userManager.UpdateAsync(upUser);
             }
 
-            return user;
+            return user1;
         }
     }
 }

@@ -4,49 +4,58 @@
     ViewBag.Title = "Register";
 }
 
-<h2>Registration new @ViewBag.Role</h2>
-<hr />
+<div class="row">
+    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="col-md-4 col-md-offset-3">
+            <h2>@ViewBag.Title</h2>
+            <h4>Create new @ViewBag.Role</h4>
+            <br />
+            @Html.ValidationSummary(false)
+            <input type="hidden" name="schoolId" value="@ViewBag.SchoolId" />
+            <input type="hidden" name="classroomId" value="@ViewBag.ClassroomId" />
+            <input type="hidden" name="role" value="@ViewBag.Role" />
+            <div class="form-group" style="width:270%">
+                <label for="FirstName" class="col-lg-2 control-label">First name</label>
+                <div class="col-lg-10">
+                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", @id = "FirstName", @placeholder = "First name" } })
+                </div>
+            </div>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
+            <div class="form-group" style="width:270%">
+                <label for="SecondName" class="col-lg-2 control-label">Second name</label>
+                <div class="col-lg-10">
+                    @Html.EditorFor(model => model.SecondName, new { htmlAttributes = new { @class = "form-control", @id = "SecondName", @placeholder = "Second name" } })
+                </div>
+            </div>
 
-    <div>
-        @Html.ValidationSummary(false)
-        <input type="hidden" name="schoolId" value="@ViewBag.SchoolId" />
-        <input type="hidden" name="classroomId" value="@ViewBag.ClassroomId" />
-        <input type="hidden" name="role" value="@ViewBag.Role" />
-        <div>
-            <p class="form-group">
-                <label>First name</label><br />
-                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-            </p>
+            <div class="form-group" style="width:270%">
+                <label for="inputEmail" class="col-lg-2 control-label">Email</label>
+                <div class="col-lg-10">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @id = "inputEmail", @placeholder = "Email" } })
+                </div>
+            </div>
 
-            <p class="form-group">
-                <label>Second name</label><br />
-                @Html.EditorFor(model => model.SecondName, new { htmlAttributes = new { @class = "form-control" } })
-            </p>
+            <div class="form-group" style="width:270%">
+                <label for="Password" class="col-lg-2 control-label">Password</label>
+                <div class="col-lg-10">
+                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @id = "Password", @placeholder = "Password" } })
+                </div>
+            </div>
 
-            <p class="form-group">
-                <label>Email</label><br />
-                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
-            </p>
+            <div class="form-group" style="width:270%">
+                <label for="PasswordConfirm" class="col-lg-2 control-label">Confirm password</label>
+                <div class="col-lg-10">
+                    @Html.EditorFor(model => model.PasswordConfirm, new { htmlAttributes = new { @class = "form-control", @id = "PasswordConfirm", @placeholder = "Password confirm" } })
+                </div>
+            </div>
 
-            <p class="form-group">
-                <label>Password</label><br />
-                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
-            </p>
-
-            <p class="form-group">
-                <label>Confirm password</label><br />
-                @Html.EditorFor(model => model.PasswordConfirm, new { htmlAttributes = new { @class = "form-control" } })
-            </p>
+            <div class="form-group" style="width:270%">
+                <div class="col-md-offset-2 col-md-10">
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
+            </div>
         </div>
-
-        <div>
-            <p>
-                <button type="submit" class = "btn btn-default">Submit</button>
-            </p>
-        </div>
-    </div>
-}
+    }
+</div>
