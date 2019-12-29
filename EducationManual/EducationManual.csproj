@@ -193,7 +193,6 @@
     <Compile Include="Controllers\Lesson\LessonController.cs" />
     <Compile Include="Controllers\Lesson\TaskController.cs" />
     <Compile Include="Controllers\SchoolController.cs" />
-    <Compile Include="Controllers\StudentController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -383,7 +382,6 @@
     <Content Include="Views\Classroom\Delete.cshtml" />
     <Content Include="Views\Classroom\Update.cshtml" />
     <Content Include="Views\User\Delete.cshtml" />
-    <Content Include="Views\Student\List.cshtml" />
     <Content Include="Views\User\Details.cshtml" />
     <Content Include="Views\User\List.cshtml" />
     <Content Include="Views\Lesson\ChooseClassroom.cshtml" />
