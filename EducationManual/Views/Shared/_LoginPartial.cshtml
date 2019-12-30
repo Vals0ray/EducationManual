@@ -1,27 +1,14 @@
 ﻿@using Microsoft.AspNet.Identity
 @using EducationManual.Models
 
-<style>
-    #brand:hover {
-        color: darkslategray;
-    }
-
-    #brand{
-        font-style: oblique;
-        font-size:   x-large;
-    }
-</style>
-
 @if (Request.IsAuthenticated)
 {
     <ul class="nav navbar-nav">
-        <li class="active">
-            @Html.ActionLink("Education Manual", "Index", "Home", new { area = "" }, new { @class = "navbar-brand", @id="brand"})
-        </li>
+        
         @if (User.IsInRole("SuperAdmin"))
         {
             <li>
-                @Html.ActionLink("Schools", "List", "School")
+                @Html.ActionLink("Schools", "List", "School", null, new { @title ="View list of schools" })
             </li>
             if (DataSave.SchoolName == "")
             {
@@ -42,17 +29,11 @@
                         </li>
                     </ul>
                 </li>
-                <li>
-                    <a>@DataSave.SchoolName</a>
-                </li>
             }
             else
             {
                 <li>
-                    <a>@DataSave.SchoolName</a>
-                </li>
-                <li>
-                    @Html.ActionLink("Classrooms", "List", "Classroom", new { id = DataSave.SchoolId }, null)
+                    @Html.ActionLink(@DataSave.SchoolName, "List", "Classroom", new { id = DataSave.SchoolId }, new { @title ="View list of classroms" })
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Users <span class="caret"></span></a>
@@ -114,7 +95,7 @@
                     </li>
 
                     <li class="divider"></li>
-                    <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                    <li><a href="javascript:document.getElementById('logoutForm').submit()" title="Sign out">Log off</a></li>
                 </ul>
             </li>
         </ul>

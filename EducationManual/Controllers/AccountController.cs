@@ -184,12 +184,13 @@ namespace EducationManual.Controllers
 
         //
         // GET: /Manage/ChangePassword
-        public ActionResult ChangePassword(string id, string returnURl)
+        public ActionResult ChangePassword(string id, string returnURl, string userName)
         {
             if (!string.IsNullOrEmpty(id))
             {
                 ViewBag.UserId = id;
                 ViewBag.ReturnURL = returnURl;
+                ViewBag.UserName = userName;
                 return View();
             }
 

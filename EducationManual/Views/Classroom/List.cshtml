@@ -1,18 +1,21 @@
 ﻿@model EducationManual.Models.School
 
+@{
+    ViewBag.Title = "List of the classroms";
+}
+
+<h2>@ViewBag.Title</h2>
+<h4>Classrooms in the @Model.Name</h4>
+
 <div id="modDialog" class="modal fade">
     <div id="dialogContent" class="modal-dialog"></div>
 </div>
 
-<p>
-    <h2>Classrooms list</h2>
-</p>
-
-<br/>
+<br />
 
 <table class="table table-striped table-hover ">
     <tr class="success">
-        <th>
+        <th style="text-align:center;width:3%;">
             #
         </th>
         <th>
@@ -28,7 +31,7 @@
     @foreach (var item in Model.Classrooms)
     {
         <tr class="active" style="font-size:large;vertical-align:central;">
-            <td onclick="Redirect(@item.ClassroomId)">
+            <td style="background-color:#00e6b8; width:3%; vertical-align:central;text-align:center" onclick="Redirect(@item.ClassroomId)">
                 @i
                 @{ i++;}
             </td>
@@ -39,7 +42,7 @@
                 @Html.DisplayFor(modelItem => item.Students.Count)
             </td>
             <td>
-                
+
                 @if (!User.IsInRole("Teacher"))
                 {
                     @Html.ActionLink("Update", "Update", new { id = item.ClassroomId }, new { @class = "btn btn-primary btn-xs" })
@@ -56,7 +59,7 @@
 @if (!User.IsInRole("Teacher"))
 {
     <p>
-        @Html.ActionLink("Create new classroom", "Create", null, new { @class = "btn btn-default" })
+        @Html.ActionLink("Create new classroom", "Create", null, new { @class = "btn btn-primary" })
     </p>
 }
 

@@ -22,11 +22,13 @@ namespace EducationManual.Controllers
 
         private readonly IUserService _userService;
         private readonly ISchoolService _schoolService;
+        private readonly IClassroomService _classroomService;
 
-        public UserController(IUserService userService, ISchoolService schoolService)
+        public UserController(IUserService userService, ISchoolService schoolService, IClassroomService classroomService)
         {
             _userService = userService;
             _schoolService = schoolService;
+            _classroomService = classroomService;
         }
 
         // Display list of users in specific role
@@ -46,13 +48,16 @@ namespace EducationManual.Controllers
                     if(classroomId != null)
                     {
                         var students = await _userService.GetStudentsAsync((int)classroomId);
-                        if(students != null)
+                        var classroom = await _classroomService.GetClassroomAsync((int)classroomId);
+
+                        if(students != null && classroom != null)
                         {
                             var studentsUsers = students.Select(s => s.ApplicationUser).ToList();
 
                             usersInRole = usersInRole.Where(u => studentsUsers.Any(s => s.Id == u.Id));
 
                             ViewBag.ClassroomId = classroomId;
+                            ViewBag.ClassroomName = classroom.Name;
                         }
                     }
 

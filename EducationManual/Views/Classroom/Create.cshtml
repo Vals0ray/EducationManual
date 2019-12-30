@@ -1,9 +1,9 @@
 ﻿@model EducationManual.Models.Classroom
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Create new classroom</h4>
         <hr />
@@ -17,12 +17,10 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </div>
     </div>
-}
 
-<div>
-    @Html.ActionLink("Back to List", "List", new { id = @EducationManual.Models.DataSave.SchoolId})
-</div>
+    @Html.ActionLink("Back to the list", "List", new { id = @EducationManual.Models.DataSave.SchoolId }, new { @class = "btn btn-default" })
+}
