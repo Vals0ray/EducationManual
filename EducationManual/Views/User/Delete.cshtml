@@ -13,7 +13,8 @@
             <h4>Delete @Model.Role</h4>
         </div>
         <div class="modal-body">
-            <p>Realy delete
+            <p>
+                Realy delete
                 @Html.DisplayFor(model => model.FirstName)
                 @Html.DisplayFor(model => model.SecondName)
                 ?
@@ -24,6 +25,7 @@
             <input type="hidden" value="@Model.Role" name="Role" />
             <input type="hidden" value="@Model.SchoolId" name="SchoolId" />
             <input type="hidden" value="@Model.Email" name="Email" />
+            <input type="hidden" value="@ViewBag.ReturnUrl" name="returnUrl" />
             <input type="submit" value="Delete" class="btn btn-primary" />
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>

@@ -1,10 +1,23 @@
 ﻿@using Microsoft.AspNet.Identity
 @using EducationManual.Models
-@using System.Text
+
+<style>
+    #brand:hover {
+        color: darkslategray;
+    }
+
+    #brand{
+        font-style: oblique;
+        font-size:   x-large;
+    }
+</style>
 
 @if (Request.IsAuthenticated)
 {
     <ul class="nav navbar-nav">
+        <li class="active">
+            @Html.ActionLink("Education Manual", "Index", "Home", new { area = "" }, new { @class = "navbar-brand", @id="brand"})
+        </li>
         @if (User.IsInRole("SuperAdmin"))
         {
             <li>
@@ -113,23 +126,3 @@ else
         <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
     </ul>
 }
-
-@*<style>
-    #avatar {
-    /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
-    background-image: url('http://i.stack.imgur.com/Dj7eP.jpg');
-    
-    /* make a square container */
-    width: 20px;
-    height: 20px;
-
-    /* fill the container, preserving aspect ratio, and cropping to fit */
-    background-size: cover;
-
-    /* center the image vertically and horizontally */
-    background-position: top center;
-
-    /* round the edges to a circle with border radius 1/2 container size */
-    border-radius: 50%;
-}
-</style>*@

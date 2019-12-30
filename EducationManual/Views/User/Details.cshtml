@@ -1,36 +1,21 @@
 ﻿@model EducationManual.ViewModels.UserViewModel
 @using Microsoft.AspNet.Identity
 @using EducationManual.Models
-@using System.Text
 
 <div id="modDialog" class="modal fade">
     <div id="dialogContent" class="modal-dialog"></div>
 </div>
 
-<style>
-    #wrapper {
-        display: flex;
-        flex-direction: row;
-    }
-
-    #left {
-        flex: 3;
-    }
-
-    #right {
-        flex: 1;
-    }
-</style>
-
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    <h3>User information</h3>
+    <div class="row">
+        <h3 class="col-md-offset-5">User information</h3>
+    </div>
     <hr />
-        <div id="wrapper">
-            <div id="right"></div>
-
-            <div id="left" class="form-horizontal">
+    <div class="row">
+        <div class="col-md-5 col-md-offset-1">
+            <div class="form-horizontal">
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 @Html.HiddenFor(model => model.Id)
                 @Html.HiddenFor(model => model.SchoolId)
@@ -39,40 +24,40 @@
                 @if ((!User.IsInRole("Teacher") || Model.Id == User.Identity.GetUserId()) && !User.IsInRole("Student"))
                 {
                     <div class="form-group">
-                        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
+                        <label class = "control-label col-md-4">First name</label>
+                        <div class="col-md-8">
                             @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.SecondName, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
+                        <label class="control-label col-md-4">Second name</label>
+                        <div class="col-md-8">
                             @Html.EditorFor(model => model.SecondName, new { htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.SecondName, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
+                        <label class="control-label col-md-4">E-mail</label>
+                        <div class="col-md-8">
                             @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
+                        <label class="control-label col-md-4">Phone number</label>
+                        <div class="col-md-8">
                             @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
+                        <label class="control-label col-md-4">User role</label>
+                        <div class="col-md-8">
                             @*@Html.EditorFor(model => model.Role, new { htmlAttributes = new { @class = "form-control" } })*@
                             @Html.DropDownListFor(model => model.Role, ViewBag.Roles as SelectList, new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
@@ -80,20 +65,21 @@
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.SchoolName, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
+                        <label class="control-label col-md-4">School name</label>
+                        <div class="col-md-8">
                             @Html.DropDownListFor(model => model.SchoolName, ViewBag.SchoolNames as SelectList, new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.SchoolName, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.isBlocked, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            <div class="checkbox">
-                                <label>
+                        <label class="control-label col-md-4"></label>
+                        <div class="col-md-8">
+                            <div class="form-check">
+                                <label class="form-check-label">
                                     @Html.EditorFor(model => model.isBlocked, new { @class = "checkbox" })
                                     @Html.ValidationMessageFor(model => model.isBlocked, "", new { @class = "text-danger" })
+                                    User blocked
                                 </label>
                             </div>
                         </div>
@@ -160,9 +146,12 @@
                     </div>
                 }
             </div>
+        </div>
 
-            <div id="right" class="form-horizontal">
-                @Html.Label("User photo")
+        <div class="col-md-2 col-md-offset-1">
+            <div class="form-horizontal">
+                <label>User photo</label>
+
                 <br />
 
                 @if (Model.ProfilePicture == null)
@@ -176,38 +165,37 @@
 
                 @if (Model.Id == User.Identity.GetUserId() || User.IsInRole("SchoolAdmin") || User.IsInRole("SuperAdmin"))
                 {
-                <div class="form-group">
-                    <br />
-                    <label for="InputFile">Change photo</label>
-                    <input type="file" size="100" class="form-control-file" id="InputFile" aria-describedby="fileHelp">
-                    <small id="fileHelp" class="form-text text-muted">This is some placeholder block-level.</small>
-                </div>
+                    <div class="form-group">
+                        <br />
+                        <label for="InputFile">Change photo</label>
+                        <input type="file" size="100" class="form-control-file" id="InputFile" aria-describedby="fileHelp">
+                        <small id="fileHelp" class="form-text text-muted">This is some placeholder block-level.</small>
+                    </div>
                 }
             </div>
-
-            <div id="right"></div>
         </div>
+    </div>
 
-        <div style="text-align: center;">
-            <a href="@Model.returnURL" class="btn btn-default">Back</a>
+    <div style="text-align: center;">
+        <a href="@Model.returnURL" class="btn btn-default">Back</a>
 
-            @if (!User.IsInRole("Teacher") && !User.IsInRole("Student"))
-            {
-                <input type="submit" value="Save changes" class="btn btn-default" />
-                
-                @Html.ActionLink("Change password", "ChangePassword", "Account", new { id = Model.Id, returnURl = Request.Url }, new { @class = "btn btn-default" })
-                <div class="btn btn-default">
-                    @Html.ActionLink("Delete", "Delete", new { id = Model.Id, userRole = Model.Role, returnUrl = Model.returnURL },
-                                                         new { @class = "delItem", @style = "text-decoration:none;color:white;" })
-                </div>
-            }
-            else if (Model.Id == User.Identity.GetUserId() && !User.IsInRole("Student"))
-            {
-                <input type="submit" value="Save changes" class="btn btn-default" />
-                
-                @Html.ActionLink("Change password", "ChangePassword", "Account", new { id = Model.Id, returnURl = Request.Url }, new { @class = "btn btn-default" })
-            }
-        </div>
+        @if (!User.IsInRole("Teacher") && !User.IsInRole("Student"))
+        {
+            <input type="submit" value="Save changes" class="btn btn-default" />
+
+            @Html.ActionLink("Change password", "ChangePassword", "Account", new { id = Model.Id, returnURl = Request.Url }, new { @class = "btn btn-default" })
+            <div class="btn btn-default">
+                @Html.ActionLink("Delete", "Delete", new { id = Model.Id, userRole = Model.Role, returnUrl = Model.returnURL },
+                                                     new { @class = "delItem", @style = "text-decoration:none;color:white;" })
+            </div>
+        }
+        else if (Model.Id == User.Identity.GetUserId() && !User.IsInRole("Student"))
+        {
+            <input type="submit" value="Save changes" class="btn btn-default" />
+
+            @Html.ActionLink("Change password", "ChangePassword", "Account", new { id = Model.Id, returnURl = Request.Url }, new { @class = "btn btn-default" })
+        }
+    </div>
 }
 
 @section scripts

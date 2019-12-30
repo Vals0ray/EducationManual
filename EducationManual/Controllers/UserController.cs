@@ -265,6 +265,7 @@ namespace EducationManual.Controllers
                     message = $"{pattern} photo!";
                     Logger.UserUpdateLog(message);
                     oldUser.ProfilePicture = newUserPicture;
+                    DataSave.Photo = Encoding.ASCII.GetString(newUserPicture);
                 }
             }
         }
@@ -277,7 +278,7 @@ namespace EducationManual.Controllers
 
         // Ask whether or not to remove selected the user
         [HttpGet]
-        public async Task<ActionResult> Delete(string id, string userRole)
+        public async Task<ActionResult> Delete(string id, string userRole, string returnUrl)
         {
             if (id != null && userRole != null)
             {
@@ -294,6 +295,7 @@ namespace EducationManual.Controllers
                         Role = userRole
                     };
 
+                    ViewBag.ReturnUrl = returnUrl;
                     return View(userView);
                 }
             }
@@ -303,7 +305,7 @@ namespace EducationManual.Controllers
 
         // Remove selected user
         [HttpPost]
-        public async Task<ActionResult> Delete(UserViewModel userViewModel)
+        public async Task<ActionResult> Delete(UserViewModel userViewModel, string returnUrl)
         {
             if (userViewModel == null) 
                 return HttpNotFound();
@@ -327,7 +329,7 @@ namespace EducationManual.Controllers
             string message = $"[{UserIP}] [{User.Identity.Name}] delete [{userViewModel.Email}]";
             Logger.UserUpdateLog(message);
 
-            return Redirect(Request.UrlReferrer.AbsoluteUri);
+            return Redirect(returnUrl);
         }
     }
 }

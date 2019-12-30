@@ -101,7 +101,7 @@ namespace EducationManual.Controllers
 
                         await _userService.AddStudentAsync(student);
 
-                        return RedirectToAction("List", "Student", new { id = classroomId });
+                        return RedirectToAction("List", "User", new { usersRole = role, classroomId = classroomId });
                     }
                 }
                 else
