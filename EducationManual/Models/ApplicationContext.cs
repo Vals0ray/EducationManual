@@ -5,6 +5,11 @@ namespace EducationManual.Models
 {
     public class ApplicationContext : IdentityDbContext<ApplicationUser>
     {
+        static ApplicationContext()
+        {
+            Database.SetInitializer(new ContextInitializer());
+        }
+
         public DbSet<School> Schools { get; set; }
 
         public DbSet<Classroom> Classrooms { get; set; }
@@ -19,7 +24,5 @@ namespace EducationManual.Models
         {
             return new ApplicationContext();
         }
-
-        //public System.Data.Entity.DbSet<EducationManual.Models.ApplicationUser> ApplicationUsers { get; set; }
     }
 }

@@ -200,17 +200,13 @@
     <Compile Include="Hubs\CustomUserIdProvider.cs" />
     <Compile Include="Hubs\NotificationHub.cs" />
     <Compile Include="Logs\Logger.cs" />
-    <Compile Include="Migrations\202001021331005_Migration.cs" />
-    <Compile Include="Migrations\202001021331005_Migration.designer.cs">
-      <DependentUpon>202001021331005_Migration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationContext.cs" />
     <Compile Include="Models\ApplicationRole.cs" />
     <Compile Include="Models\ApplicationRoleManager.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\ApplicationUserManager.cs" />
     <Compile Include="Models\Classroom.cs" />
+    <Compile Include="Models\ContextInitializer.cs" />
     <Compile Include="Models\DataSave.cs" />
     <Compile Include="ViewModels\LoginModel.cs" />
     <Compile Include="Models\TaskForStudent.cs" />
@@ -402,7 +398,6 @@
     <Content Include="Views\User\Partial\DetailsUserPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Views\Task\" />
   </ItemGroup>
   <ItemGroup>
@@ -415,11 +410,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202001021331005_Migration.resx">
-      <DependentUpon>202001021331005_Migration.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

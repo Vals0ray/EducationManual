@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -22,10 +23,17 @@ namespace EducationManual.Models
                     using(ApplicationContext db = new ApplicationContext())
                     {
                         string id = HttpContext.Current.User.Identity.GetUserId();
-                        var user = db.Users.First(u => u.Id == id);
-                        if(user.ProfilePicture != null)
+                        try
                         {
-                            photo = Encoding.ASCII.GetString(user.ProfilePicture);
+                            var user = db.Users.First(u => u.Id == id);
+                            if (user.ProfilePicture != null)
+                            {
+                                photo = Encoding.ASCII.GetString(user.ProfilePicture);
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
                         }
                     }
                 }
