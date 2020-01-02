@@ -1,6 +1,14 @@
 # Education Manual
 
-Simple Web application for online lessons. 
+Simple Web application for online lessons.
+
+## Used frameworks and technologies:
+- ASP.NET MVC 5;
+- ASP.NET Identity;
+- Entity Framework 6;
+- NUnit testing;
+- Log4Net;
+- SignalR 2;
 
 ## How it works
 Users role in the system: SuperAdmin, SchoolAdmin, Teacher, Student <br />
