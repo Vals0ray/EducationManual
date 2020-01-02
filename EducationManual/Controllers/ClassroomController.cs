@@ -49,7 +49,7 @@ namespace EducationManual.Controllers
         [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
         public async Task<ActionResult> Create(Classroom classroom)
         {
-            if (classroom != null)
+            if (ModelState.IsValid)
             {
                 classroom.SchoolId = DataSave.SchoolId;
 
@@ -62,7 +62,7 @@ namespace EducationManual.Controllers
                 return RedirectToAction("List", new { id = classroom.SchoolId });
             }
 
-            return HttpNotFound();
+            return View("Create", classroom);
         }
 
         // Update existing Classroom
@@ -83,7 +83,7 @@ namespace EducationManual.Controllers
         [Authorize(Roles = "SuperAdmin, SchoolAdmin")]
         public async Task<ActionResult> Update(Classroom newClassroom)
         {
-            if (newClassroom != null)
+            if (ModelState.IsValid)
             {
                 var oldClassroom = await _classroomService.GetClassroomAsync(newClassroom.ClassroomId);
                 if (oldClassroom != null)
@@ -99,7 +99,7 @@ namespace EducationManual.Controllers
                 }
             }
 
-            return HttpNotFound();
+            return View("Update", newClassroom);
         }
 
         // Delete existing Classroom

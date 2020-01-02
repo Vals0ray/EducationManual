@@ -200,9 +200,9 @@
     <Compile Include="Hubs\CustomUserIdProvider.cs" />
     <Compile Include="Hubs\NotificationHub.cs" />
     <Compile Include="Logs\Logger.cs" />
-    <Compile Include="Migrations\201912211301450_FinalMigration.cs" />
-    <Compile Include="Migrations\201912211301450_FinalMigration.designer.cs">
-      <DependentUpon>201912211301450_FinalMigration.cs</DependentUpon>
+    <Compile Include="Migrations\202001021331005_Migration.cs" />
+    <Compile Include="Migrations\202001021331005_Migration.designer.cs">
+      <DependentUpon>202001021331005_Migration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationContext.cs" />
@@ -417,8 +417,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201912211301450_FinalMigration.resx">
-      <DependentUpon>201912211301450_FinalMigration.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202001021331005_Migration.resx">
+      <DependentUpon>202001021331005_Migration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

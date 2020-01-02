@@ -8,6 +8,7 @@ namespace EducationManual.Models
         [Key]
         public int ClassroomId { get; set; }
 
+        [Required]
         public string Name { get; set; }
 
         public int? SchoolId { get; set; }

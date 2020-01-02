@@ -46,7 +46,7 @@ namespace EducationManual.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(SchoolViewModel schoolViewModel)
         {
-            if (schoolViewModel != null) 
+            if (ModelState.IsValid) 
             {
                 var newSchool = new School() { Name = schoolViewModel.Name };
 
@@ -58,7 +58,7 @@ namespace EducationManual.Controllers
                 return RedirectToAction("List");
             }
 
-            return HttpNotFound();
+            return View("Create");
         }
 
         // Update existing school
@@ -87,7 +87,7 @@ namespace EducationManual.Controllers
         [HttpPost]
         public async Task<ActionResult> Update(SchoolViewModel newSchool)
         {
-            if (newSchool != null)
+            if (ModelState.IsValid)
             {
                 var oldSchool = await _schoolService.GetSchoolAsync(newSchool.Id);
                 if (oldSchool != null)
@@ -103,7 +103,7 @@ namespace EducationManual.Controllers
                 }
             }
 
-            return HttpNotFound();
+            return View("Update", newSchool);
         }
 
         // Delete existing school
