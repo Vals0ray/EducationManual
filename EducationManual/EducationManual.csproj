@@ -200,6 +200,11 @@
     <Compile Include="Hubs\CustomUserIdProvider.cs" />
     <Compile Include="Hubs\NotificationHub.cs" />
     <Compile Include="Logs\Logger.cs" />
+    <Compile Include="Migrations\202001031329211_First migration.cs" />
+    <Compile Include="Migrations\202001031329211_First migration.designer.cs">
+      <DependentUpon>202001031329211_First migration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationContext.cs" />
     <Compile Include="Models\ApplicationRole.cs" />
     <Compile Include="Models\ApplicationRoleManager.cs" />
@@ -396,10 +401,9 @@
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\User\Partial\DetailsAdminPartial.cshtml" />
     <Content Include="Views\User\Partial\DetailsUserPartial.cshtml" />
+    <Content Include="Views\Task\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Task\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
@@ -410,6 +414,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202001031329211_First migration.resx">
+      <DependentUpon>202001031329211_First migration.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

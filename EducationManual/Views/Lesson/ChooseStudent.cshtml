@@ -1,53 +1,64 @@
 ﻿@model IEnumerable<EducationManual.ViewModels.LessonViewModel>
 
-<p>
-    <h3>
-        Choose tasks for students in classroom: @ViewBag.ClassroomName
-    </h3>
-</p>
+@{
+    ViewBag.Title = "New lesson in " + @ViewBag.ClassroomName;
+}
 
-<br/>
+<h2>@ViewBag.Title</h2>
+<h4>Assign tasks for students</h4>
+
+<br />
 
 <table class="table table-striped table-hover ">
-    <tr>
-        <th>
+    <tr class="success">
+        <th style="text-align:center;width:3%;">
             #
         </th>
         <th>
-            Student
+            Student first name
+        </th>
+        <th>
+            Student second name
         </th>
         <th>
             Task
         </th>
     </tr>
 
-@{ int i = 0;}
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @{ i++;}
-            @i
-        </td>
-        <td>
-            @Html.DisplayFor(iteme => item.Student.ApplicationUser.FirstName)
-
-            @Html.DisplayFor(iteme => item.Student.ApplicationUser.SecondName)
-        </td>
-        <td>
-            @if (item.TestId == null)
-            {
-                @Html.ActionLink("Select", "ChooseTask", new { studentId = item.Student.Id, classroomId = ViewBag.ClassroomId })
-            }
-            else
-            {
-                @Html.DisplayFor(iteme => item.TestId)
-            }
-        </td>
-    </tr>
-}
+    @{ int i = 0;}
+    @foreach (var item in Model)
+    {
+        <tr class="active" style="font-size:large;vertical-align:central;">
+            <td style="background-color:#00e6b8; width:3%; vertical-align:central;text-align:center">
+                @{ i++;}
+                @i
+            </td>
+            <td>
+                @Html.DisplayFor(iteme => item.Student.ApplicationUser.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(iteme => item.Student.ApplicationUser.SecondName)
+            </td>
+            <td>
+                @if (item.TestId == null)
+                {
+                    <div class="btn btn-primary btn-xs">
+                        @Html.ActionLink("Select", "ChooseTask", new { studentId = item.Student.Id, classroomId = ViewBag.ClassroomId }, new { @style = "text-decoration:none;color:white;"})
+                    </div>
+                }
+                else
+                {
+                    <div class="btn btn-primary btn-xs">
+                        @Html.ActionLink(item.TestId.ToString(), "ChooseTask", new { studentId = item.Student.Id, classroomId = ViewBag.ClassroomId }, new { @style = "text-decoration:none;color:white;"})
+                    </div>
+                }
+            </td>
+        </tr>
+    }
 
 </table>
 
 <p>
-    @Html.ActionLink("Start Lesson", "StartLesson", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Back to classroms list", "ChooseClassroom", "Lesson", null, new { @class = "btn btn-default" })
+    @Html.ActionLink("Start Lesson", "StartLesson", null, new { @class = "btn btn-primary" })
 </p>

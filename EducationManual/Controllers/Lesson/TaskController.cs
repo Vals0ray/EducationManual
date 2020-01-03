@@ -4,9 +4,10 @@ namespace EducationManual.Controllers.Lesson
 {
     public class TaskController : Controller
     {
-        public string Index(int taskId)
+        public ViewResult Index(int taskId)
         {
-            return $"Start! {taskId}";
+            ViewBag.Message = $"Start! {taskId}"; ;
+            return View(); 
         }
     }
 }

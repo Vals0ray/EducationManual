@@ -54,10 +54,7 @@
         else if (User.IsInRole("SchoolAdmin") || User.IsInRole("Teacher"))
         {
             <li>
-                <a>@DataSave.SchoolName</a>
-            </li>
-            <li>
-                @Html.ActionLink("Classrooms", "List", "Classroom", new { id = DataSave.SchoolId }, null)
+                @Html.ActionLink(@DataSave.SchoolName, "List", "Classroom", new { id = DataSave.SchoolId }, new { @title ="View list of classroms" })
             </li>
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Users <span class="caret"></span></a>
