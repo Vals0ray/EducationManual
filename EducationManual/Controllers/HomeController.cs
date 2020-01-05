@@ -1,11 +1,11 @@
 ﻿using EducationManual.Models;
-using EducationManual.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Text;
+using EducationManual.Interfaces;
+using System.Linq;
 
 namespace EducationManual.Controllers
 {
@@ -14,9 +14,9 @@ namespace EducationManual.Controllers
         private ApplicationUserManager UserManager =>
             HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
-        private readonly ISchoolService _schoolService;
+        private readonly IGenericService<School> _schoolService;
 
-        public HomeController(ISchoolService schoolService)
+        public HomeController(IGenericService<School> schoolService)
         {
             _schoolService = schoolService;
         }
@@ -28,7 +28,7 @@ namespace EducationManual.Controllers
                 var userId = User.Identity.GetUserId();
                 var currentUser = await UserManager.FindByIdAsync(userId);
                 if (currentUser == null) return RedirectToAction("Logout", "Account");
-                var school = await _schoolService.GetSchoolAsync((int)currentUser.SchoolId);
+                var school = _schoolService.Get(s => s.SchoolId == currentUser.SchoolId).First();
 
                 DataSave.SchoolName = school.Name;
                 DataSave.SchoolId = school.SchoolId; 

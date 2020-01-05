@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using EducationManual.Hubs;
+using EducationManual.Interfaces;
 
 namespace EducationManual.Controllers.Lesson
 {
@@ -18,13 +19,13 @@ namespace EducationManual.Controllers.Lesson
         private ApplicationUserManager UserManager =>
             HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
-        private readonly IClassroomService _classroomService;
+        private readonly IGenericService<Classroom> _classroomService;
 
         private readonly IUserService _userService;
 
         private readonly ITaskService _taskService;
 
-        public LessonController(IClassroomService classroomService, IUserService userService, ITaskService taskService)
+        public LessonController(IGenericService<Classroom> classroomService, IUserService userService, ITaskService taskService)
         {
             _classroomService = classroomService;
             _userService = userService;
@@ -38,7 +39,7 @@ namespace EducationManual.Controllers.Lesson
             var currentUser = await UserManager.FindByIdAsync(userId);
             int id = (int)currentUser.SchoolId;
 
-            var classrooms = await _classroomService.GetClassroomsAsync((int)id);
+            var classrooms = _classroomService.Get(c => c.ClassroomId == id).First();
 
             return View(classrooms);
         }
@@ -48,7 +49,7 @@ namespace EducationManual.Controllers.Lesson
 
         public async Task<ActionResult> ChooseStudent(int classroomId, string studentId = null, int? testId = null)
         {
-            var classroom = await _classroomService.GetClassroomAsync(classroomId);
+            var classroom = _classroomService.Get(c => c.ClassroomId == classroomId).First();
             ViewBag.ClassroomName = classroom.Name;
             ViewBag.ClassroomId = classroomId;
             var students = await _userService.GetStudentsAsync(classroomId);

@@ -1,3 +1,4 @@
+using EducationManual.Models;
 using EducationManual.Repositories;
 using EducationManual.Services;
 using System;
@@ -16,11 +17,13 @@ namespace EducationManual
           {
               var container = new UnityContainer();
 
-              container.RegisterType<ISchoolRepository, SchoolRepository>();
-              container.RegisterType<ISchoolService, SchoolService>();
+              container.RegisterType<Interfaces.IUnitOfWork, UnitOfWork>();
 
-              container.RegisterType<IClassroomRepository, ClassroomRepository>();
-              container.RegisterType<IClassroomService, ClassroomService>();
+              container.RegisterType<Interfaces.IGenericRepository<School>, GenericRepository<School>>();
+              container.RegisterType<Interfaces.IGenericRepository<Classroom>, GenericRepository<Classroom>>();
+
+              container.RegisterType<Interfaces.IGenericService<School>, SchoolService>();
+              container.RegisterType<Interfaces.IGenericService<Classroom>, ClassroomService>();
 
               container.RegisterType<IUserRepository, UserRepository>();
               container.RegisterType<IUserService, UserService>();

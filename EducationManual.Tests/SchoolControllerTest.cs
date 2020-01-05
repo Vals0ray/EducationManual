@@ -1,7 +1,10 @@
-﻿using System.Web;
+﻿using System;
+using System.Collections.Generic;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using EducationManual.Controllers;
+using EducationManual.Interfaces;
 using EducationManual.Models;
 using EducationManual.Services;
 using EducationManual.ViewModels;
@@ -13,7 +16,7 @@ namespace EducationManual.Tests
     [TestClass]
     public class SchoolControllerTest
     {
-        private Mock<ISchoolService> mock;
+        private Mock<IGenericService<School>> mock;
         private Mock<HttpContextBase> moqContext;
         private Mock<HttpRequestBase> moqRequest;
 
@@ -23,7 +26,7 @@ namespace EducationManual.Tests
             // Setup Moq
             moqContext = new Mock<HttpContextBase>();
             moqRequest = new Mock<HttpRequestBase>();
-            mock = new Mock<ISchoolService>();
+            mock = new Mock<IGenericService<School>>();
             moqContext.Setup(x => x.Request).Returns(moqRequest.Object);
             moqContext.Setup(x => x.Request.UserHostAddress).Returns("192.111.1.1");
             moqContext.Setup(x => x.User.Identity.Name).Returns("TestUser");
@@ -36,7 +39,7 @@ namespace EducationManual.Tests
             SchoolController controller = new SchoolController(mock.Object);
 
             // Act
-            ViewResult result = controller.List().Result as ViewResult;
+            ViewResult result = controller.List() as ViewResult;
 
             // Assert
             Assert.IsNotNull(result.Model);
@@ -52,7 +55,7 @@ namespace EducationManual.Tests
             controller.ModelState.AddModelError("Name", "Error!!!");
 
             // Act
-            ViewResult result = controller.Create(school).Result as ViewResult;
+            ViewResult result = controller.Create(school) as ViewResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -70,7 +73,7 @@ namespace EducationManual.Tests
                 new ControllerContext(moqContext.Object, new RouteData(), controller);
 
             // Act
-            RedirectToRouteResult result = controller.Create(school).Result as RedirectToRouteResult;
+            RedirectToRouteResult result = controller.Create(school) as RedirectToRouteResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -87,7 +90,7 @@ namespace EducationManual.Tests
             controller.ModelState.AddModelError("Name", "Error!!!");
 
             // Act
-            ViewResult result = controller.Update(school).Result as ViewResult;
+            ViewResult result = controller.Update(school) as ViewResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -100,13 +103,14 @@ namespace EducationManual.Tests
             // Arrange
             string expected = "List";
             SchoolViewModel school = new SchoolViewModel() { Name = "TestSchool", Id = 1 };
-            mock.Setup(x => x.GetSchoolAsync(1)).ReturnsAsync(new School() { Name = "Test" });
+            mock.Setup(x => x.Get(It.IsAny<Func<School, bool>>()))
+                .Returns((Func<School, bool> func) => new List<School> { new School { Name = "TestSchool", SchoolId = 1 }});
             SchoolController controller = new SchoolController(mock.Object);
             controller.ControllerContext =
                 new ControllerContext(moqContext.Object, new RouteData(), controller);
 
             // Act
-            RedirectToRouteResult result = controller.Update(school).Result as RedirectToRouteResult;
+            RedirectToRouteResult result = controller.Update(school) as RedirectToRouteResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -118,12 +122,14 @@ namespace EducationManual.Tests
         {
             // Arrange
             string expected = "List";
+            mock.Setup(x => x.Get(It.IsAny<Func<School, bool>>()))
+                .Returns((Func<School, bool> func) => new List<School> { new School { Name = "TestSchool", SchoolId = 1 } });
             SchoolController controller = new SchoolController(mock.Object);
             controller.ControllerContext =
                 new ControllerContext(moqContext.Object, new RouteData(), controller);
 
             // Act
-            RedirectToRouteResult result = controller.Delete(1, "TestName").Result as RedirectToRouteResult;
+            RedirectToRouteResult result = controller.Delete(1, "TestName") as RedirectToRouteResult;
 
             // Assert
             Assert.IsNotNull(result);

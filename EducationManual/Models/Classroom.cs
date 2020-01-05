@@ -11,7 +11,7 @@ namespace EducationManual.Models
         [Required]
         public string Name { get; set; }
 
-        public int? SchoolId { get; set; }
+        public int SchoolId { get; set; }
         public School School { get; set; }
 
         public ICollection<Student> Students { get; set; }

@@ -1,4 +1,5 @@
-﻿using EducationManual.Logs;
+﻿using EducationManual.Interfaces;
+using EducationManual.Logs;
 using EducationManual.Models;
 using EducationManual.Services;
 using EducationManual.ViewModels;
@@ -21,10 +22,10 @@ namespace EducationManual.Controllers
         private string UserIP => HttpContext.Request.UserHostAddress;
 
         private readonly IUserService _userService;
-        private readonly ISchoolService _schoolService;
-        private readonly IClassroomService _classroomService;
+        private readonly IGenericService<School> _schoolService;
+        private readonly IGenericService<Classroom> _classroomService;
 
-        public UserController(IUserService userService, ISchoolService schoolService, IClassroomService classroomService)
+        public UserController(IUserService userService, IGenericService<School> schoolService, IGenericService<Classroom> classroomService)
         {
             _userService = userService;
             _schoolService = schoolService;
@@ -48,7 +49,7 @@ namespace EducationManual.Controllers
                     if(classroomId != null)
                     {
                         var students = await _userService.GetStudentsAsync((int)classroomId);
-                        var classroom = await _classroomService.GetClassroomAsync((int)classroomId);
+                        var classroom = _classroomService.Get(c => c.ClassroomId == classroomId).First();
 
                         if(students != null && classroom != null)
                         {
@@ -112,7 +113,7 @@ namespace EducationManual.Controllers
                     returnURL = returnURL
                 };
 
-                await CreateSchoolsAndRolesViews(userView);
+                CreateSchoolsAndRolesViews(userView);
 
                 return View(userView);
             }
@@ -128,7 +129,7 @@ namespace EducationManual.Controllers
             {
                 var oldUser = await _userService.GetUserAsync(newUser.Id);
                 var userRole = (await UserManager.GetRolesAsync(newUser.Id)).First();
-                var school = await _schoolService.GetSchoolByNameAsync(newUser.SchoolName);
+                var school = _schoolService.Get(s => s.Name == newUser.SchoolName).First();
 
                 if (oldUser != null)
                 {
@@ -152,7 +153,7 @@ namespace EducationManual.Controllers
                             }
 
                             school.SchoolAdminId = oldUser.Id;
-                            await _schoolService.UpdateSchoolAsync(school);
+                            _schoolService.Update(school);
                         }
                         // If we change school admin role, delete in school link to admin
                         else if (newUser.Role != "SchoolAdmin" && userRole == "SchoolAdmin")
@@ -160,7 +161,7 @@ namespace EducationManual.Controllers
                             if (school.SchoolAdminId != null)
                             {
                                 school.SchoolAdminId = null;
-                                await _schoolService.UpdateSchoolAsync(school);
+                                _schoolService.Update(school);
                             }
                         }
                     }
@@ -180,14 +181,14 @@ namespace EducationManual.Controllers
                 }
             }
 
-            await CreateSchoolsAndRolesViews(newUser);
+            CreateSchoolsAndRolesViews(newUser);
             
             return View(newUser);
         }
 
-        private async Task CreateSchoolsAndRolesViews(UserViewModel userView)
+        private void CreateSchoolsAndRolesViews(UserViewModel userView)
         {
-            var schools = await _schoolService.GetSchoolsAsync();
+            var schools = _schoolService.Get();
             var schoolsNames = new List<string> { userView.SchoolName };
             var roles = new List<string>();
 
@@ -318,9 +319,9 @@ namespace EducationManual.Controllers
             switch (userViewModel.Role)
             {
                 case "SchoolAdmin":
-                    var school = await _schoolService.GetSchoolAsync(userViewModel.SchoolId);
+                    var school = _schoolService.Get(s => s.SchoolId == userViewModel.SchoolId).First();
                     school.SchoolAdminId = null;
-                    await _schoolService.UpdateSchoolAsync(school);
+                    _schoolService.Update(school);
                     await _userService.DeleteUserAsync(userViewModel.Id);
                     break;
                 case "Student":

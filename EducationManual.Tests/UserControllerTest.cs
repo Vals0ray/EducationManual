@@ -3,6 +3,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using EducationManual.Controllers;
+using EducationManual.Interfaces;
 using EducationManual.Models;
 using EducationManual.Services;
 using EducationManual.ViewModels;
@@ -15,8 +16,8 @@ namespace EducationManual.Tests
     public class UserControllerTest
     {
         private Mock<IUserService> mockUserService;
-        private Mock<ISchoolService> mockSchoolService;
-        private Mock<IClassroomService> mockClassroomService;
+        private Mock<IGenericService<School>> mockSchoolService;
+        private Mock<IGenericService<Classroom>> mockClassroomService;
         private Mock<HttpContextBase> moqContext;
         private Mock<HttpRequestBase> moqRequest;
 
@@ -27,8 +28,8 @@ namespace EducationManual.Tests
             moqContext = new Mock<HttpContextBase>();
             moqRequest = new Mock<HttpRequestBase>();
             mockUserService = new Mock<IUserService>();
-            mockSchoolService = new Mock<ISchoolService>();
-            mockClassroomService = new Mock<IClassroomService>();
+            mockSchoolService = new Mock<IGenericService<School>>();
+            mockClassroomService = new Mock<IGenericService<Classroom>>();
             moqContext.Setup(x => x.Request).Returns(moqRequest.Object);
             moqContext.Setup(x => x.Request.UserHostAddress).Returns("192.111.1.1");
             moqContext.Setup(x => x.User.Identity.Name).Returns("TestUser");

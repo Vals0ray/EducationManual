@@ -1,47 +1,61 @@
-﻿using EducationManual.Models;
-using EducationManual.Repositories;
+﻿using EducationManual.Interfaces;
+using EducationManual.Models;
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace EducationManual.Services
 {
-    public class SchoolService : ISchoolService
+    public class SchoolService : IGenericService<School>
     {
-        private readonly ISchoolRepository _schoolRepository;
+        private IUnitOfWork Database { get; set; }
 
-        public SchoolService(ISchoolRepository schoolRepository)
+        public SchoolService(IUnitOfWork uow)
         {
-            _schoolRepository = schoolRepository;
+            Database = uow;
         }
 
-        public async Task<School> AddSchoolAsync(School school)
+        public void Create(School item)
         {
-            return await _schoolRepository.AddSchoolAsync(school);
+            Database.Schools.Create(item);
+            Database.Save();
         }
 
-        public async Task DeleteSchoolAsync(int id)
+        public School FindById(int id)
         {
-            await _schoolRepository.DeleteSchoolAsync(id);
+            return Database.Schools.FindById(id);
         }
 
-        public async Task<School> GetSchoolAsync(int id)
+        public IEnumerable<School> Get()
         {
-            return await _schoolRepository.GetSchoolAsync(id);
+            return Database.Schools.Get();
         }
 
-        public async Task<School> GetSchoolByNameAsync(string name)
+        public IEnumerable<School> Get(Func<School, bool> predicate)
         {
-            return await _schoolRepository.GetSchoolByNameAsync(name);
+            return Database.Schools.Get(predicate);
         }
 
-        public async Task<IEnumerable<School>> GetSchoolsAsync()
+        public void Remove(School item)
         {
-            return await _schoolRepository.GetSchoolsAsync();
+            Database.Schools.Remove(item);
+            Database.Save();
         }
 
-        public async Task<School> UpdateSchoolAsync(School school)
+        public void Update(School item)
         {
-            return await _schoolRepository.UpdateSchoolAsync(school);
+            Database.Schools.Update(item);
+            Database.Save();
+        }
+
+        public IEnumerable<School> GetWithInclude(params Expression<Func<School, object>>[] includeProperties)
+        {
+            return Database.Schools.GetWithInclude(includeProperties);
+        }
+
+        public IEnumerable<School> GetWithInclude(Func<School, bool> predicate, params Expression<Func<School, object>>[] includeProperties)
+        {
+            return Database.Schools.GetWithInclude(predicate, includeProperties);
         }
     }
 }

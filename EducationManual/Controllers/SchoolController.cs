@@ -1,11 +1,12 @@
 ﻿using EducationManual.Models;
 using EducationManual.ViewModels;
-using EducationManual.Services;
+using EducationManual.Interfaces;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web;
 using Microsoft.AspNet.Identity.Owin;
 using EducationManual.Logs;
+using System.Linq;
 
 namespace EducationManual.Controllers
 {
@@ -17,17 +18,19 @@ namespace EducationManual.Controllers
 
         private string UserIP => HttpContext.Request.UserHostAddress;
 
-        private readonly ISchoolService _schoolService;
+        private readonly IGenericService<School> _schoolService;
 
-        public SchoolController(ISchoolService schoolService)
+        public SchoolController(IGenericService<School> schoolService)
         {
             _schoolService = schoolService;
         }
 
         // Out put list of schools
-        public async Task<ActionResult> List()
+        public ActionResult List()
         {
-            var schools = await _schoolService.GetSchoolsAsync();
+            var schools = _schoolService
+                .GetWithInclude(s => s.ApplicationUsers, s => s.Classrooms.Select(c => c.Students));
+
             if(schools != null)
             {
                 DataSave.SchoolName = "";
@@ -44,13 +47,13 @@ namespace EducationManual.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(SchoolViewModel schoolViewModel)
+        public ActionResult Create(SchoolViewModel schoolViewModel)
         {
             if (ModelState.IsValid) 
             {
                 var newSchool = new School() { Name = schoolViewModel.Name };
 
-                await _schoolService.AddSchoolAsync(newSchool);
+                _schoolService.Create(newSchool);
 
                 string message = $"[{UserIP}] [{User.Identity.Name}] created school: {newSchool.Name}";
                 Logger.Log.Info(message);
@@ -66,7 +69,7 @@ namespace EducationManual.Controllers
         {
             if (id != null)
             {
-                School school = await _schoolService.GetSchoolAsync((int)id);
+                School school = _schoolService.Get(s => s.SchoolId == id).First();
                 if (school != null)
                 {
                     SchoolViewModel schoolViewModel = new SchoolViewModel()
@@ -85,11 +88,11 @@ namespace EducationManual.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Update(SchoolViewModel newSchool)
+        public ActionResult Update(SchoolViewModel newSchool)
         {
             if (ModelState.IsValid)
             {
-                var oldSchool = await _schoolService.GetSchoolAsync(newSchool.Id);
+                var oldSchool = _schoolService.Get(s => s.SchoolId == newSchool.Id).First();
                 if (oldSchool != null)
                 {
                     string message = $"[{UserIP}] [{User.Identity.Name}] changed school: " +
@@ -97,7 +100,7 @@ namespace EducationManual.Controllers
                     Logger.Log.Info(message);
 
                     oldSchool.Name = newSchool.Name;
-                    await _schoolService.UpdateSchoolAsync(oldSchool);
+                    _schoolService.Update(oldSchool);
 
                     return RedirectToAction("List");
                 }
@@ -115,11 +118,12 @@ namespace EducationManual.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Delete(int? id, string schoolName)
+        public ActionResult Delete(int? id, string schoolName)
         {
             if (id != null && !string.IsNullOrEmpty(schoolName))
             {
-                await _schoolService.DeleteSchoolAsync((int)id);
+                var school = _schoolService.Get(s => s.SchoolId == id).First();
+                _schoolService.Remove(school);
 
                 string message = $"[{UserIP}] [{User.Identity.Name}] deleted school: {schoolName}";
                 Logger.Log.Info(message);

@@ -1,42 +1,61 @@
-﻿using EducationManual.Repositories;
-using System.Collections.Generic;
+﻿using EducationManual.Interfaces;
 using EducationManual.Models;
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace EducationManual.Services
 {
-    public class ClassroomService : IClassroomService
+    public class ClassroomService : IGenericService<Classroom>
     {
-        private readonly IClassroomRepository _classroomRepository;
+        private IUnitOfWork Database { get; set; }
 
-        public ClassroomService(IClassroomRepository classroomRepository)
+        public ClassroomService(IUnitOfWork uow)
         {
-            _classroomRepository = classroomRepository;
+            Database = uow;
         }
 
-        public async Task<Classroom> AddClassroomAsync(Classroom classroom)
+        public void Create(Classroom item)
         {
-            return await _classroomRepository.AddClassroomAsync(classroom);
+            Database.Classrooms.Create(item);
+            Database.Save();
         }
 
-        public async Task DeleteClassroomAsync(int id)
+        public Classroom FindById(int id)
         {
-            await _classroomRepository.DeleteClassroomAsync(id);
+            return Database.Classrooms.FindById(id);
         }
 
-        public async Task<Classroom> GetClassroomAsync(int id)
+        public IEnumerable<Classroom> Get()
         {
-            return await _classroomRepository.GetClassroomAsync(id);
+            return Database.Classrooms.Get();
         }
 
-        public async Task<IEnumerable<Classroom>> GetClassroomsAsync(int schoolId)
+        public IEnumerable<Classroom> Get(Func<Classroom, bool> predicate)
         {
-            return await _classroomRepository.GetClassroomsAsync(schoolId);
+            return Database.Classrooms.Get(predicate);
         }
 
-        public async Task<Classroom> UpdateClassroomAsync(Classroom classroom)
+        public IEnumerable<Classroom> GetWithInclude(params Expression<Func<Classroom, object>>[] includeProperties)
         {
-            return await _classroomRepository.UpdateClassroomAsync(classroom);
+            return Database.Classrooms.GetWithInclude(includeProperties);
+        }
+
+        public IEnumerable<Classroom> GetWithInclude(Func<Classroom, bool> predicate, params Expression<Func<Classroom, object>>[] includeProperties)
+        {
+            return Database.Classrooms.GetWithInclude(predicate, includeProperties);
+        }
+
+        public void Remove(Classroom item)
+        {
+            Database.Classrooms.Remove(item);
+            Database.Save();
+        }
+
+        public void Update(Classroom item)
+        {
+            Database.Classrooms.Update(item);
+            Database.Save();
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using System.Security.Claims;
+﻿using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using EducationManual.Interfaces;
 using EducationManual.Logs;
 using EducationManual.Models;
 using EducationManual.Services;
@@ -23,9 +25,9 @@ namespace EducationManual.Controllers
         private string UserIP => HttpContext.Request.UserHostAddress;
 
         private readonly IUserService _userService;
-        private readonly ISchoolService _schoolService;
+        private readonly IGenericService<School> _schoolService;
 
-        public AccountController(IUserService userService, ISchoolService schoolService)
+        public AccountController(IUserService userService, IGenericService<School> schoolService)
         {
             _userService = userService;
             _schoolService = schoolService;
@@ -73,7 +75,7 @@ namespace EducationManual.Controllers
 
                     if (role == "SchoolAdmin")
                     {
-                        School school = await _schoolService.GetSchoolAsync(schoolId);
+                        School school = _schoolService.Get(s => s.SchoolId == schoolId).First();
 
                         if(school.SchoolAdminId != null)
                         {
@@ -82,7 +84,7 @@ namespace EducationManual.Controllers
                         }
 
                         school.SchoolAdminId = user.Id;
-                        await _schoolService.UpdateSchoolAsync(school);
+                        _schoolService.Update(school);
 
                         return RedirectToAction("Update", "School", new { id = schoolId });
                     }

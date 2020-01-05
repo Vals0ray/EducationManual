@@ -1,9 +1,12 @@
-﻿using System.Web;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using EducationManual.Controllers;
+using EducationManual.Interfaces;
 using EducationManual.Models;
-using EducationManual.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -12,8 +15,8 @@ namespace EducationManual.Tests
     [TestClass]
     public class ClassroomControllerTest
     {
-        private Mock<ISchoolService> mockSchoolService;
-        private Mock<IClassroomService> mockClassroomService;
+        private Mock<IGenericService<School>> mockSchoolService;
+        private Mock<IGenericService<Classroom>> mockClassroomService;
         private Mock<HttpContextBase> moqContext;
         private Mock<HttpRequestBase> moqRequest;
 
@@ -23,8 +26,8 @@ namespace EducationManual.Tests
             // Setup Moq
             moqContext = new Mock<HttpContextBase>();
             moqRequest = new Mock<HttpRequestBase>();
-            mockSchoolService = new Mock<ISchoolService>();
-            mockClassroomService = new Mock<IClassroomService>();
+            mockSchoolService = new Mock<IGenericService<School>>();
+            mockClassroomService = new Mock<IGenericService<Classroom>>();
             moqContext.Setup(x => x.Request).Returns(moqRequest.Object);
             moqContext.Setup(x => x.Request.UserHostAddress).Returns("192.111.1.1");
             moqContext.Setup(x => x.User.Identity.Name).Returns("TestUser");
@@ -34,12 +37,15 @@ namespace EducationManual.Tests
         public void ListViewModelNotNull()
         {
             // Arrange
-            mockSchoolService.Setup(s => s.GetSchoolAsync(1)).ReturnsAsync(new School());
+            mockSchoolService
+                .Setup(x => x.GetWithInclude(It.IsAny<Func<School, bool>>(), It.IsAny<Expression<Func<School, object>>[]> ()))
+                .Returns((Func<School, bool> func, Expression<Func<School, object>>[] exp) => 
+                    new List<School> { new School { Name = "TestSchool", SchoolId = 1 } });
             ClassroomController controller = 
                 new ClassroomController(mockClassroomService.Object, mockSchoolService.Object);
 
             // Act
-            ViewResult result = controller.List(1).Result as ViewResult;
+            ViewResult result = controller.List(1) as ViewResult;
 
             // Assert
             Assert.IsNotNull(result.Model);
@@ -56,7 +62,7 @@ namespace EducationManual.Tests
             controller.ModelState.AddModelError("Name", "Error!!!");
 
             // Act
-            ViewResult result = controller.Create(classroom).Result as ViewResult;
+            ViewResult result = controller.Create(classroom) as ViewResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -69,13 +75,16 @@ namespace EducationManual.Tests
             // Arrange
             string expected = "List";
             Classroom classroom = new Classroom() { Name = "TestClassroom", SchoolId = 1};
+            DataSave.SchoolId = 1;
+            mockClassroomService
+                .Setup(x => x.Create(It.IsAny<Classroom>()));
             ClassroomController controller = 
                 new ClassroomController(mockClassroomService.Object, mockSchoolService.Object);
             controller.ControllerContext = 
                 new ControllerContext(moqContext.Object, new RouteData(), controller);
 
             // Act
-            RedirectToRouteResult result = controller.Create(classroom).Result as RedirectToRouteResult;
+            RedirectToRouteResult result = controller.Create(classroom) as RedirectToRouteResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -93,7 +102,7 @@ namespace EducationManual.Tests
             controller.ModelState.AddModelError("Name", "Error!!!");
 
             // Act
-            ViewResult result = controller.Update(classroom).Result as ViewResult;
+            ViewResult result = controller.Update(classroom) as ViewResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -106,15 +115,17 @@ namespace EducationManual.Tests
             // Arrange
             string expected = "List";
             Classroom classroom = new Classroom() { Name = "TestClassroom", SchoolId = 1, ClassroomId = 1 };
-            mockClassroomService.Setup(c => c.GetClassroomAsync(1))
-                .ReturnsAsync(new Classroom() { Name = "TestClassroom2", SchoolId = 2 });
+            mockClassroomService
+                .Setup(x => x.Get(It.IsAny<Func<Classroom, bool>>()))
+                .Returns((Func<Classroom, bool> func) =>
+                    new List<Classroom> { new Classroom { Name = "TestSchool", ClassroomId = 1 } });
             ClassroomController controller =
                 new ClassroomController(mockClassroomService.Object, mockSchoolService.Object);
             controller.ControllerContext =
                 new ControllerContext(moqContext.Object, new RouteData(), controller);
 
             // Act
-            RedirectToRouteResult result = controller.Update(classroom).Result as RedirectToRouteResult;
+            RedirectToRouteResult result = controller.Update(classroom) as RedirectToRouteResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -127,8 +138,10 @@ namespace EducationManual.Tests
             // Arrange
             string expected = "List";
             Classroom classroom = new Classroom() { Name = "TestClassroom", SchoolId = 1, ClassroomId = 1 };
-            mockClassroomService.Setup(c => c.GetClassroomAsync(1))
-                .ReturnsAsync(new Classroom() { Name = "TestClassroom2", SchoolId = 2 });
+            mockClassroomService
+                .Setup(x => x.Get(It.IsAny<Func<Classroom, bool>>()))
+                .Returns((Func<Classroom, bool> func) =>
+                    new List<Classroom> { new Classroom { Name = "TestSchool", ClassroomId = 1 } });
 
             ClassroomController controller =
                 new ClassroomController(mockClassroomService.Object, mockSchoolService.Object);
@@ -137,7 +150,7 @@ namespace EducationManual.Tests
                 new ControllerContext(moqContext.Object, new RouteData(), controller);
 
             // Act
-            RedirectToRouteResult result = controller.Delete(1).Result as RedirectToRouteResult;
+            RedirectToRouteResult result = controller.Delete(1) as RedirectToRouteResult;
 
             // Assert
             Assert.IsNotNull(result);

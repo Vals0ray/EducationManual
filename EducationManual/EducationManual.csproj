@@ -199,10 +199,16 @@
     </Compile>
     <Compile Include="Hubs\CustomUserIdProvider.cs" />
     <Compile Include="Hubs\NotificationHub.cs" />
+    <Compile Include="Services\ClassroomService.cs" />
+    <Compile Include="Interfaces\IGenericRepository.cs" />
+    <Compile Include="Interfaces\IGenericService.cs" />
+    <Compile Include="Interfaces\IUnitOfWork.cs" />
+    <Compile Include="Services\SchoolService.cs" />
+    <Compile Include="Repositories\UnitOfWork.cs" />
     <Compile Include="Logs\Logger.cs" />
-    <Compile Include="Migrations\202001031329211_First migration.cs" />
-    <Compile Include="Migrations\202001031329211_First migration.designer.cs">
-      <DependentUpon>202001031329211_First migration.cs</DependentUpon>
+    <Compile Include="Migrations\202001051255279_first.cs" />
+    <Compile Include="Migrations\202001051255279_first.designer.cs">
+      <DependentUpon>202001051255279_first.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationContext.cs" />
@@ -213,6 +219,7 @@
     <Compile Include="Models\Classroom.cs" />
     <Compile Include="Models\ContextInitializer.cs" />
     <Compile Include="Models\DataSave.cs" />
+    <Compile Include="Repositories\GenericRepository.cs" />
     <Compile Include="ViewModels\LoginModel.cs" />
     <Compile Include="Models\TaskForStudent.cs" />
     <Compile Include="Repositories\ITaskRepository.cs" />
@@ -224,17 +231,9 @@
     <Compile Include="Models\School.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\ClassroomRepository.cs" />
-    <Compile Include="Repositories\IClassroomRepository.cs" />
-    <Compile Include="Repositories\ISchoolRepository.cs" />
     <Compile Include="Repositories\IUserRepository.cs" />
-    <Compile Include="Repositories\SchoolRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
-    <Compile Include="Services\ClassroomService.cs" />
-    <Compile Include="Services\IClassroomService.cs" />
-    <Compile Include="Services\ISchoolService.cs" />
     <Compile Include="Services\IUserService.cs" />
-    <Compile Include="Services\SchoolService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="ViewModels\ChangePasswordViewModel.cs" />
     <Compile Include="ViewModels\SchoolViewModel.cs" />
@@ -403,7 +402,11 @@
     <Content Include="Views\User\Partial\DetailsUserPartial.cshtml" />
     <Content Include="Views\Task\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202001051255279_first.resx">
+      <DependentUpon>202001051255279_first.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
@@ -414,11 +417,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202001031329211_First migration.resx">
-      <DependentUpon>202001031329211_First migration.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
