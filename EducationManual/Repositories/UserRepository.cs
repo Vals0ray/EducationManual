@@ -7,63 +7,58 @@ using System.Web;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using EducationManual.Interfaces;
 
 namespace EducationManual.Repositories
 {
     public class UserRepository : IUserRepository
     {
+        public ApplicationContext Database { get; set; }
+        public UserRepository(ApplicationContext db)
+        {
+            Database = db;
+        }
+
         public async Task<Student> AddStudentAsync(Student student)
         {
             Student result = null;
 
-            using (var db = new ApplicationContext())
-            {
-                result = db.Students.Add(student);
-                await db.SaveChangesAsync();
-            }
+            result = Database.Students.Add(student);
+            await Database.SaveChangesAsync();
 
             return result;
         }
 
         public async Task DeleteStudentAsync(string id)
         {
-            using (var db = new ApplicationContext())
+            var student = await Database.Students.Include(s => s.ApplicationUser)
+                                            .FirstOrDefaultAsync(u => u.Id == id);
+
+            if(student != null)
             {
-                var student = await db.Students.Include(s => s.ApplicationUser)
-                                               .FirstOrDefaultAsync(u => u.Id == id);
+                Database.Entry(student).State = EntityState.Deleted;
 
-                if(student != null)
-                {
-                    db.Entry(student).State = EntityState.Deleted;
+                await Database.SaveChangesAsync();
 
-                    await db.SaveChangesAsync();
-
-                    await DeleteUserAsync(id);
-                }
+                await DeleteUserAsync(id);
             }
         }
 
         public async Task DeleteUserAsync(string id)
         {
-            using (var db = new ApplicationContext())
-            {
-                var user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await Database.Users.FirstOrDefaultAsync(u => u.Id == id);
 
-                db.Entry(user).State = EntityState.Deleted;
+            Database.Entry(user).State = EntityState.Deleted;
 
-                await db.SaveChangesAsync();
-            }
+            await Database.SaveChangesAsync();
         }
 
         public async Task<Student> GetStudentAsync(string id)
         {
             Student result = null;
 
-            using (var db = new ApplicationContext())
-            {
-                result = await db.Students.Include(s => s.ApplicationUser)
-                                          .FirstOrDefaultAsync(s => s.Id == id);
-            }
+            result = await Database.Students.Include(s => s.ApplicationUser)
+                                        .FirstOrDefaultAsync(s => s.Id == id);
 
             return result;
         }
@@ -72,13 +67,10 @@ namespace EducationManual.Repositories
         {
             var result = new List<Student>();
 
-            using (var db = new ApplicationContext())
-            {
-                result = await db.Students.Include(s => s.Classroom)
-                                          .Include(s => s.ApplicationUser)
-                                          .Where(s => s.ClassroomId == id)
-                                          .ToListAsync();
-            }
+            result = await Database.Students.Include(s => s.Classroom)
+                                        .Include(s => s.ApplicationUser)
+                                        .Where(s => s.ClassroomId == id)
+                                        .ToListAsync();
 
             return result;
         }
@@ -87,11 +79,8 @@ namespace EducationManual.Repositories
         {
             ApplicationUser result = null;
 
-            using (var db = new ApplicationContext())
-            {
-                result = await db.Users.Include(u => u.School)
-                                       .FirstOrDefaultAsync(u => u.Id == id);
-            }
+            result = await Database.Users.Include(u => u.School)
+                                    .FirstOrDefaultAsync(u => u.Id == id);
 
             return result;
         }
@@ -100,12 +89,9 @@ namespace EducationManual.Repositories
         {
             ApplicationUser result = null;
 
-            using (var db = new ApplicationContext())
-            {
-                result = await db.Users.AsNoTracking()
-                                       .Include(u => u.School)
-                                       .FirstOrDefaultAsync(u => u.Id == id);
-            }
+            result = await Database.Users.AsNoTracking()
+                                    .Include(u => u.School)
+                                    .FirstOrDefaultAsync(u => u.Id == id);
 
             return result;
         }
@@ -115,28 +101,22 @@ namespace EducationManual.Repositories
             var result = new List<ApplicationUser>();
             var RoleManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationRoleManager>();
 
-            using (var db = new ApplicationContext())
-            {
-                // Look up the role
-                var role = RoleManager.Roles.Single(r => r.Name == usersRole);
+            // Look up the role
+            var role = RoleManager.Roles.Single(r => r.Name == usersRole);
 
-                // Find the users in that role
-                result = await db.Users.Where(u => u.Roles.Any(r => r.RoleId == role.Id))
-                                       .Include(u => u.School)
-                                       .ToListAsync();
-            }
+            // Find the users in that role
+            result = await Database.Users.Where(u => u.Roles.Any(r => r.RoleId == role.Id))
+                                    .Include(u => u.School)
+                                    .ToListAsync();
 
             return result;
         }
 
         public async Task<Student> UpdateStudentAsync(Student student)
         {
-            using (var db = new ApplicationContext())
-            {
-                db.Entry(student).State = EntityState.Modified;
+            Database.Entry(student).State = EntityState.Modified;
 
-                await db.SaveChangesAsync();
-            }
+            await Database.SaveChangesAsync();
 
             return student;
         }

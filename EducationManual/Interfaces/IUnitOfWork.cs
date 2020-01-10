@@ -1,4 +1,5 @@
 ﻿using EducationManual.Models;
+using EducationManual.Repositories;
 
 namespace EducationManual.Interfaces
 {
@@ -7,6 +8,8 @@ namespace EducationManual.Interfaces
         IGenericRepository<School> Schools { get; }
 
         IGenericRepository<Classroom> Classrooms { get; }
+
+        IUserRepository UserManager { get; }
 
         void Save();
     }

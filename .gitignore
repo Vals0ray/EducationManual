@@ -11,6 +11,7 @@
 # Build results
 [Mm]igrations/
 [Dd]ebug/
+Properties/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
@@ -22,6 +23,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+EducationManual.DAL/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

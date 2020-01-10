@@ -3,21 +3,19 @@ using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace EducationManual.Repositories
+namespace EducationManual.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserService
     {
         Task<ApplicationUser> GetUserAsync(string id);
 
         Task<ApplicationUser> GetUserWithoutTrackingAsync(string id);
 
-        Task<IEnumerable<ApplicationUser>> GetUserByRoleAsync(string usersRole);
-
         Task DeleteUserAsync(string id);
 
-        Task<IdentityResult> UpdateUserAsync(ApplicationUser user);
+        Task<IEnumerable<ApplicationUser>> GetUserByRoleAsync(string usersRole);
 
-        // 
+        Task<IdentityResult> UpdateUserAsync(ApplicationUser user);
 
         Task<IEnumerable<Student>> GetStudentsAsync(int id);
 
@@ -28,7 +26,5 @@ namespace EducationManual.Repositories
         Task DeleteStudentAsync(string id);
 
         Task<Student> UpdateStudentAsync(Student student);
-
-        //
     }
 }

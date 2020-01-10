@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EducationManual", "Educatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EducationManual.Tests", "EducationManual.Tests\EducationManual.Tests.csproj", "{37D9C494-97DA-4273-8B68-FC2BBF5CEDAE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EducationManual.DAL", "EducationManual.DAL\EducationManual.DAL.csproj", "{A4669F99-5F7B-4E1B-AD5F-22A79F738D57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{37D9C494-97DA-4273-8B68-FC2BBF5CEDAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37D9C494-97DA-4273-8B68-FC2BBF5CEDAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37D9C494-97DA-4273-8B68-FC2BBF5CEDAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4669F99-5F7B-4E1B-AD5F-22A79F738D57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4669F99-5F7B-4E1B-AD5F-22A79F738D57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4669F99-5F7B-4E1B-AD5F-22A79F738D57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4669F99-5F7B-4E1B-AD5F-22A79F738D57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

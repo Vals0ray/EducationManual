@@ -9,6 +9,7 @@ namespace EducationManual.Repositories
         private ApplicationContext db;
         private GenericRepository<School> schoolRepository;
         private GenericRepository<Classroom> classroomRepository;
+        private IUserRepository userManager;
 
         public UnitOfWork()
         {
@@ -32,6 +33,16 @@ namespace EducationManual.Repositories
                 if (classroomRepository == null)
                     classroomRepository = new GenericRepository<Classroom>(db);
                 return classroomRepository;
+            }
+        }
+
+        public IUserRepository UserManager
+        {
+            get
+            {
+                if (userManager == null)
+                    userManager = new UserRepository(db);
+                return userManager;
             }
         }
 

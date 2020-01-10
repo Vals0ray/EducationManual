@@ -1,5 +1,5 @@
-﻿using EducationManual.Models;
-using EducationManual.Repositories;
+﻿using EducationManual.Interfaces;
+using EducationManual.Models;
 using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,61 +8,61 @@ namespace EducationManual.Services
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository _userRepository;
+        private IUnitOfWork Database { get; set; }
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUnitOfWork uow)
         {
-            _userRepository = userRepository;
+            Database = uow;
         }
 
         public async Task<Student> AddStudentAsync(Student student)
         {
-            return await _userRepository.AddStudentAsync(student);
+            return await Database.UserManager.AddStudentAsync(student);
         }
 
         public async Task DeleteStudentAsync(string id)
         {
-            await _userRepository.DeleteStudentAsync(id);
+            await Database.UserManager.DeleteStudentAsync(id);
         }
 
         public async Task DeleteUserAsync(string id)
         {
-            await _userRepository.DeleteUserAsync(id);
+            await Database.UserManager.DeleteUserAsync(id);
         }
 
         public async Task<Student> GetStudentAsync(string id)
         {
-            return await _userRepository.GetStudentAsync(id);
+            return await Database.UserManager.GetStudentAsync(id);
         }
 
         public async Task<IEnumerable<Student>> GetStudentsAsync(int id)
         {
-            return await _userRepository.GetStudentsAsync(id);
+            return await Database.UserManager.GetStudentsAsync(id);
         }
 
         public async Task<ApplicationUser> GetUserAsync(string id)
         {
-            return await _userRepository.GetUserAsync(id);
+            return await Database.UserManager.GetUserAsync(id);
         }
 
         public async Task<ApplicationUser> GetUserWithoutTrackingAsync(string id)
         {
-            return await _userRepository.GetUserWithoutTrackingAsync(id);
+            return await Database.UserManager.GetUserWithoutTrackingAsync(id);
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetUserByRoleAsync(string usersRole)
         {
-            return await _userRepository.GetUserByRoleAsync(usersRole);
+            return await Database.UserManager.GetUserByRoleAsync(usersRole);
         }
 
         public async Task<Student> UpdateStudentAsync(Student student)
         {
-            return await _userRepository.UpdateStudentAsync(student);
+            return await Database.UserManager.UpdateStudentAsync(student);
         }
 
         public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
         {
-            return await _userRepository.UpdateUserAsync(user);
+            return await Database.UserManager.UpdateUserAsync(user);
         }
     }
 }
